@@ -42,7 +42,7 @@ body {
     width: 90%;
     height: 100%;
     display: grid;
-    grid-template-rows: 100px 1fr 50px;
+    grid-template-rows: 110px 1fr 50px;
     box-shadow: 0 5px 12px rgba(211, 211, 211, 0.8);
 }
 
@@ -52,9 +52,35 @@ body {
 
 .header {
     /* border: 5px solid blue; */
-    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+}
+
+.header .header-top {
+    /* border: 4px solid purple; */
     display: flex;
     align-items: center;
+    padding: 18px 18px 12px 18px;
+
+}
+
+.header .header-bottom {
+    /* border: 4px solid red; */
+}
+
+.header .header-bottom .daysOfTheWeek {
+    /* display: inline-block; */
+    /* border: 6px solid pink; */
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    text-transform: uppercase;
+    font-family: var(--font-barlow-sans-serif);
+    border: 1px solid rgba(211, 211, 211, 0.8);
+    color: rgba(101, 101, 101, 1);
+    letter-spacing: 1px;;
 }
 
 .header .month {
@@ -93,6 +119,7 @@ body {
 }
 
 
+
 /* **************************************************
                         MAIN
  ************************************************** */
@@ -110,7 +137,7 @@ body {
     display: grid;
 
     /* Below must be commented out to work from setup.js */
-    /* grid-template-rows: repeat(6, minmax(150px, 1fr)); */
+    grid-template-rows: repeat(6, minmax(250px, 1fr));
 }
 
 .week {
@@ -121,6 +148,21 @@ body {
 .day {
     border: 1px solid rgba(211, 211, 211, 0.6);
     padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.day .day-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+}
+
+.day .day-body {
+    display: flex;
+    flex-direction: column;
 }
 
 .date {
@@ -142,6 +184,22 @@ body {
     background-color: black;
     color: white;
     font-weight: bold;
+}
+
+.day .modify {
+    width: 22px;
+    height: 100%;
+    padding: 4px;
+}
+
+.day .modify:hover {
+    cursor: pointer;
+}
+
+.day.empty {
+    background: rgba(251,251, 251);
+  background-image: radial-gradient(rgb(215, 214, 214) 1px, transparent 0);
+  background-size: 12px 12px;
 }
 
 /* **************************************************

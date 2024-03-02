@@ -20,7 +20,7 @@ function setupCalendar(dateVal) {
   const dimensions = Utils.getGridDimensions(sourceDate)
   const monthName = Utils.getMonthName(sourceDate.getMonth())
   calendarEl.textContent = ''
-  calendarEl.style.gridTemplateRows = `repeat(${dimensions.length}, minmax(180px, 1fr));`
+  calendarEl.style.gridTemplateRows = `repeat(${dimensions.length}, minmax(280px, 1fr));`
   headerMonthEl.textContent = `${monthName} ${sourceDate.getFullYear()}`
   headerMonthEl.ariaLabel = `${monthName} ${sourceDate.getFullYear()}`
   todayBtnEl.title = `${Utils.getMonthName(today.getMonth())} ${today.getFullYear()}`
@@ -34,20 +34,42 @@ function setupCalendar(dateVal) {
     const weekEl = document.createElement('div')
     weekEl.className = `week row-${r + 1}`
     for (let c = 0; c < dimensions[0].length; c++) {
+      const dayOfWeek = Utils.dayToStrMapping[c]
       const dayEl = document.createElement('div')
       dayEl.className = `day col-${c + 1}`
-      const dateEl = document.createElement('div')
-      dateEl.className = 'date'
-      dateEl.textContent = dimensions[r][c]
-      if (sourceDate.getMonth() == today.getMonth() && dimensions[r][c] == today.getDate()) {
-        dateEl.className += ' active'
+
+      // no date - grey out background and don't any buttons or text
+      if (dimensions[r][c].length == 0) {
+        dayEl.className += ' empty'
+      }
+      // has a date
+      else if (dimensions[r][c].length > 0) {
+        const dayHeaderEl = document.createElement('div')
+        dayHeaderEl.className = 'day-header'
+        const dayBodyEl = document.createElement('div')
+        dayBodyEl.className = 'day-body'
+        const dateEl = document.createElement('div')
+        dateEl.className = 'date'
+        dateEl.textContent = dimensions[r][c]
+        if (sourceDate.getMonth() == today.getMonth() && dimensions[r][c] == today.getDate()) {
+          dateEl.className += ' active'
+        }
+
+        const toolsBtnEl = document.createElement('button')
+        toolsBtnEl.ariaLabel = `Edit ${dayOfWeek}, ${monthName} ${dimensions[r][c]}, ${sourceDate.getFullYear()}`
+        toolsBtnEl.title = `Edit ${dayOfWeek}, ${monthName} ${dimensions[r][c]}, ${sourceDate.getFullYear()}`
+        toolsBtnEl.className = 'modify'
+        const toolsBtnImgEl = document.createElement('img')
+        toolsBtnImgEl.src = './assets/icons/ellipses.svg'
+        toolsBtnEl.appendChild(toolsBtnImgEl)
+        dateEl.title = `${dayOfWeek}, ${monthName} ${dimensions[r][c]}, ${sourceDate.getFullYear()}` // ex. "Saturday, March 2, 2024"
+        dayEl.ariaLabel = `${dayOfWeek}, ${monthName} ${dimensions[r][c]}, ${sourceDate.getFullYear()}`
+        dayHeaderEl.appendChild(dateEl)
+        dayHeaderEl.appendChild(toolsBtnEl)
+        dayEl.appendChild(dayHeaderEl)
+        dayEl.appendChild(dayBodyEl)
       }
 
-      const dayOfWeek = Utils.dayToStrMapping[c]
-      dateEl.title = `${dayOfWeek}, ${monthName} ${dimensions[r][c]}, ${sourceDate.getFullYear()}` // ex. "Saturday, March 2, 2024"
-      dayEl.ariaLabel = `${dayOfWeek}, ${monthName} ${dimensions[r][c]}, ${sourceDate.getFullYear()}`
-
-      dayEl.appendChild(dateEl)
       weekEl.appendChild(dayEl)
     }
     calendarEl.appendChild(weekEl)
