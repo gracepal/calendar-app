@@ -45,7 +45,24 @@ class Utils {
     const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
     return monthNames[monthIndex]
   }
-
+  // Returns the month index from the month name
+  static getMonthIndex = (monthName) => {
+    const monthIndices = {
+      January: 0,
+      February: 1,
+      March: 2,
+      April: 3,
+      May: 4,
+      June: 5,
+      July: 6,
+      August: 7,
+      September: 8,
+      October: 9,
+      November: 10,
+      December: 11,
+    }
+    return monthIndices[monthName]
+  }
   // Returns boolean whether or not input/current year is leap year
   static isLeapYear = (yearVal) => {
     const year = yearVal ?? new Date().getFullYear()

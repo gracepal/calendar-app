@@ -1,6 +1,10 @@
 // Elements
 const calendarEl = document.querySelector('.calendar')
 const headerMonthEl = document.querySelector('.header .month')
+const todayBtnEl = document.querySelector('.header .today')
+const prevMonthBtnEl = document.querySelector('.header .previous')
+const nextMonthBtnEl = document.querySelector('.header .next')
+const monthDisplayEl = document.querySelector('.header .month')
 
 /**
  *
@@ -15,8 +19,16 @@ function setupCalendar(dateVal) {
   const sourceDate = dateVal ?? today
   const dimensions = Utils.getGridDimensions(sourceDate)
   const monthName = Utils.getMonthName(sourceDate.getMonth())
+  calendarEl.textContent = ''
   calendarEl.style.gridTemplateRows = `repeat(${dimensions.length}, minmax(180px, 1fr));`
   headerMonthEl.textContent = `${monthName} ${sourceDate.getFullYear()}`
+  headerMonthEl.ariaLabel = `${monthName} ${sourceDate.getFullYear()}`
+  todayBtnEl.title = `${Utils.getMonthName(today.getMonth())} ${today.getFullYear()}`
+
+  const prevMonthDateObj = new Date(sourceDate.getFullYear(), sourceDate.getMonth() - 1, 1)
+  prevMonthBtnEl.title = `${Utils.getMonthName(prevMonthDateObj.getMonth())} ${prevMonthDateObj.getFullYear()}`
+  const nextMonthDateObj = new Date(sourceDate.getFullYear(), sourceDate.getMonth() + 1, 1)
+  nextMonthBtnEl.title = `${Utils.getMonthName(nextMonthDateObj.getMonth())} ${nextMonthDateObj.getFullYear()}`
 
   for (let r = 0; r < dimensions.length; r++) {
     const weekEl = document.createElement('div')
@@ -33,6 +45,7 @@ function setupCalendar(dateVal) {
 
       const dayOfWeek = Utils.dayToStrMapping[c]
       dateEl.title = `${dayOfWeek}, ${monthName} ${dimensions[r][c]}, ${sourceDate.getFullYear()}` // ex. "Saturday, March 2, 2024"
+      dayEl.ariaLabel = `${dayOfWeek}, ${monthName} ${dimensions[r][c]}, ${sourceDate.getFullYear()}`
 
       dayEl.appendChild(dateEl)
       weekEl.appendChild(dayEl)
@@ -53,5 +66,5 @@ function setupFooter() {
 
 // Setup
 const today = new Date()
-setupCalendar(new Date(today.getFullYear(), today.getMonth() + 2, 3))
+setupCalendar(new Date(today.getFullYear(), today.getMonth() - 1, 3))
 setupFooter()

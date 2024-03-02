@@ -75,12 +75,21 @@ body {
     cursor: pointer;
 }
 
+.header button:active {
+    transform: translateY(1px);
+}
+
 .header button.today {
     border: 1px solid rgba(211, 211, 211, 1);
     width: 80px;
     height: 30px;
     border-radius: 15px;
     margin-left: 5px;
+    transition: box-shadow 0.2s ease;
+}
+
+.header button.today:hover {
+    box-shadow: 0 2px 5px rgba(211, 211, 211, 0.8);
 }
 
 
