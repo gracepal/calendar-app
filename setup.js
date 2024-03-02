@@ -11,10 +11,12 @@ function setupNavbar() {}
  *
  */
 function setupCalendar(dateVal) {
-  const sourceDate = dateVal ?? new Date()
+  const today = new Date()
+  const sourceDate = dateVal ?? today
   const dimensions = Utils.getGridDimensions(sourceDate)
+  const monthName = Utils.getMonthName(sourceDate.getMonth())
   calendarEl.style.gridTemplateRows = `repeat(${dimensions.length}, minmax(180px, 1fr));`
-  headerMonthEl.textContent = `${Utils.getMonthName(sourceDate.getMonth())} ${sourceDate.getFullYear()}`
+  headerMonthEl.textContent = `${monthName} ${sourceDate.getFullYear()}`
 
   for (let r = 0; r < dimensions.length; r++) {
     const weekEl = document.createElement('div')
@@ -25,10 +27,13 @@ function setupCalendar(dateVal) {
       const dateEl = document.createElement('div')
       dateEl.className = 'date'
       dateEl.textContent = dimensions[r][c]
-      dateEl.title = 'hello hello'
-      if (dimensions[r][c] == today.getDate()) {
+      if (sourceDate.getMonth() == today.getMonth() && dimensions[r][c] == today.getDate()) {
         dateEl.className += ' active'
       }
+
+      const dayOfWeek = Utils.dayToStrMapping[c]
+      dateEl.title = `${dayOfWeek}, ${monthName} ${dimensions[r][c]}, ${sourceDate.getFullYear()}` // ex. "Saturday, March 2, 2024"
+
       dayEl.appendChild(dateEl)
       weekEl.appendChild(dayEl)
     }
@@ -48,5 +53,5 @@ function setupFooter() {
 
 // Setup
 const today = new Date()
-setupCalendar(new Date(today.getFullYear(), today.getMonth() + 1, 3))
+setupCalendar(new Date(today.getFullYear(), today.getMonth() + 2, 3))
 setupFooter()
