@@ -44,7 +44,6 @@ body {
     display: grid;
     grid-template-rows: 100px 1fr 50px;
     box-shadow: 0 5px 12px rgba(211, 211, 211, 0.8);
-
 }
 
 /* **************************************************
@@ -53,17 +52,35 @@ body {
 
 .header {
     /* border: 5px solid blue; */
-
     padding: 18px;
+    display: flex;
+    align-items: center;
 }
 
-.header .logo {
+.header .month {
+    /* border: 2px solid slateblue; */
     font-family: var(--font-fraunces-serif);
-    font-size: 24px;
+    font-size: 42px;
+    display: inline-block;
 }
 
-.header .today {
-    font-family: var(--font-karla-sans-serif);
+.header button {
+    /* border: 2px solid green; */
+    width: 24px;
+    height: 24px;
+    padding: 0 5px;
+}
+
+.header button:hover {
+    cursor: pointer;
+}
+
+.header button.today {
+    border: 1px solid rgba(211, 211, 211, 1);
+    width: 80px;
+    height: 30px;
+    border-radius: 15px;
+    margin-left: 5px;
 }
 
 
@@ -82,11 +99,10 @@ body {
     background-color: rgba(251,251, 251);
 
     display: grid;
-    grid-template-rows: repeat(6, 1fr);
+    grid-template-rows: repeat(6, minmax(150px, 1fr));
 }
 
 .week {
-
     display: grid;
     grid-template-columns: repeat(7, 1fr);
 }
@@ -96,15 +112,45 @@ body {
     padding: 8px;
 }
 
+.date {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 50%;
+}
+
+.date.active {
+    background-color: black;
+    color: white;
+    font-weight: bold;
+}
 
 /* **************************************************
                        FOOTER
  ************************************************** */
 
 .footer {
-    /* border: 5px solid green; */
-
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
+    padding: 0 15px 0 15px;
+}
+
+.footer .today {
+    font-family: var(--font-karla-sans-serif);
+}
+
+.footer .navlinks {
+    display: flex;
+    gap: 12px;
+}
+
+.footer img {
+    width: 25px;
+    height: 25px;
+    display: flex;
 }
