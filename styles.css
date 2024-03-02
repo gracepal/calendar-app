@@ -99,7 +99,9 @@ body {
     background-color: rgba(251,251, 251);
 
     display: grid;
-    grid-template-rows: repeat(6, minmax(150px, 1fr));
+
+    /* Below must be commented out to work from setup.js */
+    /* grid-template-rows: repeat(6, minmax(150px, 1fr)); */
 }
 
 .week {

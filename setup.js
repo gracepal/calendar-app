@@ -10,30 +10,27 @@ function setupNavbar() {}
  *
  */
 function setupCalendar() {
-  //
-  const dimensions = Utils.getGridDimensions()
-  const numWeekRows = 6
-  let curDate = -5 // -startDayOfWeek+1
-  let todayDate = new Date().getDate()
-  calendarEl.style.gridTemplateRows = `repeat(${numWeekRows}, minmax(180px, 1fr));`
+  const today = new Date()
+  // const dimensions = Utils.getGridDimensions(new Date(today.getFullYear(), today.getMonth() - 1, 12))
+  const dimensions = Utils.getGridDimensions(today)
+  calendarEl.style.gridTemplateRows = `repeat(${dimensions.length}, minmax(180px, 1fr));`
+  console.log('here it is', calendarEl.style.gridTemplateRows)
+  console.log('try again', `repeat(${dimensions.length}, minmax(180px, 1fr));`)
 
-  for (let i = 0; i < numWeekRows; i++) {
+  for (let r = 0; r < dimensions.length; r++) {
     const weekEl = document.createElement('div')
-    weekEl.className = `week row-${i + 1}`
-    for (let j = 0; j < 7; j++) {
+    weekEl.className = `week row-${r + 1}`
+    for (let c = 0; c < dimensions[0].length; c++) {
       const dayEl = document.createElement('div')
-      dayEl.className = `day col-${i + 1}`
+      dayEl.className = `day col-${c + 1}`
       const dateEl = document.createElement('div')
       dateEl.className = 'date'
-      if (curDate >= 1) {
-        dateEl.textContent = curDate
-        if (curDate == todayDate) {
-          dateEl.className += ' active'
-        }
+      dateEl.textContent = dimensions[r][c]
+      if (dimensions[r][c] == today.getDate()) {
+        dateEl.className += ' active'
       }
       dayEl.appendChild(dateEl)
       weekEl.appendChild(dayEl)
-      curDate += 1
     }
     calendarEl.appendChild(weekEl)
   }
