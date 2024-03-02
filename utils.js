@@ -40,6 +40,12 @@ class Utils {
     10: 30,
     11: 31, // December
   }
+  // Returns name of the month from the month index
+  static getMonthName = (monthIndex) => {
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+    return monthNames[monthIndex]
+  }
+
   // Returns boolean whether or not input/current year is leap year
   static isLeapYear = (yearVal) => {
     const year = yearVal ?? new Date().getFullYear()
