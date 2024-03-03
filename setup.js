@@ -64,6 +64,9 @@ function setupCalendar(dateVal) {
         toolsBtnEl.appendChild(toolsBtnImgEl)
         dateEl.title = `${dayOfWeek}, ${monthName} ${dimensions[r][c]}, ${sourceDate.getFullYear()}` // ex. "Saturday, March 2, 2024"
         dayEl.ariaLabel = `${dayOfWeek}, ${monthName} ${dimensions[r][c]}, ${sourceDate.getFullYear()}`
+
+        dayHeaderEl.ariaLabel = `Edit ${dayOfWeek}, ${monthName} ${dimensions[r][c]}, ${sourceDate.getFullYear()}`
+        dayHeaderEl.title = `Edit ${dayOfWeek}, ${monthName} ${dimensions[r][c]}, ${sourceDate.getFullYear()}`
         dayHeaderEl.appendChild(dateEl)
         dayHeaderEl.appendChild(toolsBtnEl)
         dayEl.appendChild(dayHeaderEl)
@@ -86,7 +89,26 @@ function setupFooter() {
   todayDisplayEl.textContent = today
 }
 
+function addItems(items) {
+  console.log('And here are the items', items)
+  console.log(headerMonthEl.textContent)
+}
+
+async function setupCalendarData(dateVal) {
+  const sourceDate = dateVal ?? today
+  console.log('Getting data for date', sourceDate)
+  await fetch('http://127.0.0.1:8000/items')
+    .then((resp) => resp.json())
+    .then((data) => {
+      console.log('Here is the data', data)
+      addItems(data)
+    })
+    .catch((err) => console.error('There was an error'))
+}
+
 // Setup
 const today = new Date()
-setupCalendar(new Date(today.getFullYear(), today.getMonth() - 1, 3))
+setupCalendar(new Date(today.getFullYear(), today.getMonth(), 3))
 setupFooter()
+
+setupCalendarData()

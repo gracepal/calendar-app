@@ -157,12 +157,16 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-
 }
 
 .day .day-body {
     display: flex;
     flex-direction: column;
+    width: 100%;
+    height: 100%;
+
+    border: 2px solid blue;
+
 }
 
 .date {
@@ -174,10 +178,6 @@ body {
     align-items: center;
 
     border-radius: 50%;
-}
-
-.date:hover {
-    cursor: pointer;
 }
 
 .date.active {
@@ -192,14 +192,18 @@ body {
     padding: 4px;
 }
 
-.day .modify:hover {
-    cursor: pointer;
-}
-
 .day.empty {
     background: rgba(251,251, 251);
   background-image: radial-gradient(rgb(215, 214, 214) 1px, transparent 0);
   background-size: 12px 12px;
+}
+
+.day .day-header:hover {
+    cursor: pointer;
+}
+
+.day .modify:hover {
+    cursor: pointer;
 }
 
 /* **************************************************
