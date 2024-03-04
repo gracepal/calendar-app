@@ -27,22 +27,29 @@ async def root():
     return { "message": "Hello World of Calendars!" }
 
 items = [
-    Item(item='Plant water babies', target_on='03/21/2024'),
-    Item(item='Bake a cake', status=StatusEnum.CANCELLED),
-    Item(item='Boxing class', target_on='04/01/2024'),
-    Item(item='Lorem ipsum dolor sit amet consectetur adipisicing elit. Deleniti, minus. Fuga nesciunt modi provident est, aperiam, incidunt maiores itaque, asperiores pariatur voluptatibus repellat delectus quam adipisci perspiciatis nisi tenetur ex.'),
+    # Item(item='Plant water babies', target_on='03/21/2024'),
+    # Item(item='Bake a cake', status=StatusEnum.CANCELLED),
+    # # Item(item='Boxing class', target_on='04/01/2024'),
+    # Item(item='Lorem ipsum dolor sit amet consectetur adipisicing elit. Deleniti, minus. Fuga nesciunt modi provident est, aperiam, incidunt maiores itaque, asperiores pariatur voluptatibus repellat delectus quam adipisci perspiciatis nisi tenetur ex.'),
 ]
 
 
 test_items = []
-for _ in range(80):
+for _ in range(4):
     test_state = random.choice([StatusEnum.ACTIVE, StatusEnum.CANCELLED, StatusEnum.COMPLETED, StatusEnum.INACTIVE])
-    start_date = datetime.datetime(2024, 3, 21)
-    end_date = datetime.datetime(2024, 3, 24)
+    start_date = datetime.datetime(2024, 3, 5)
+    end_date = datetime.datetime(2024, 3, 5)
     random_date = start_date + datetime.timedelta(days=random.randint(0, (end_date - start_date).days))
     target_on = random_date.strftime("%m/%d/%Y")
     test_items.append(Item(item=fake.sentence(), target_on=target_on, status=test_state))
 
+for _ in range(4):
+    test_state = random.choice([StatusEnum.ACTIVE, StatusEnum.CANCELLED, StatusEnum.COMPLETED, StatusEnum.INACTIVE])
+    start_date = datetime.datetime(2024, 4, 21)
+    end_date = datetime.datetime(2024, 4, 24)
+    random_date = start_date + datetime.timedelta(days=random.randint(0, (end_date - start_date).days))
+    target_on = random_date.strftime("%m/%d/%Y")
+    test_items.append(Item(item=fake.sentence(), target_on=target_on, status=test_state))
 print('here are the test items', test_items)
 items.extend(test_items)
 
@@ -115,19 +122,60 @@ async def delete_item(item_id: str):
 
 
 @app.delete("/items/delete/day/{mmddyyyy}")
-async def delete_items_on_date(mmddyyyy: str):
-    '''Delete items on a specific date mmddyyyy'''
+async def delete_items_for_date(mmddyyyy: str):
+    '''Delete items with target due on a specific date mmddyyyy'''
     target_date = datetime.datetime.strptime(mmddyyyy, '%m%d%Y')
+
+    # items_to_delete = []
+    # for item in items:
+    #     item_date = datetime.datetime.strptime(item.target_on, '%m/%d/%Y')
+    #     if item_date == target_date:
+    #         items_to_delete.append(item)
+
+    # deleted_items = []
+    # for item in items_to_delete:
+    #     copied = str(item)
+    #     deleted_items.append(copied)
+    #     items.remove(item)
+
+    # TODO: TBD deletes every 2nd one?
+    # deleted_items = []
+    # for item in items:
+    #     item_date = datetime.datetime.strptime(item.target_on, '%m/%d/%Y')
+    #     if item_date == target_date:
+    #         item_to_delete = item
+    #         deleted_items.append(item_to_delete)
+    #         items.remove(item)
+
+    # this also works. something with removing while accessing tbd
     deleted_items = []
+    for i in range(len(items)-1, -1, -1):
+        item_date = datetime.datetime.strptime(items[i].target_on, '%m/%d/%Y')
+        if item_date == target_date:
+            item_to_delete = items[i]
+            deleted_items.append(item_to_delete)
+            items.remove(items[i])
+    display_date = target_date.strftime('%m/%d/%Y')
+    return {"message": f"Total {len(deleted_items)} deleted with target date on {display_date}", "count": len(items)}
+
+
+@app.delete("/items/delete/month/{mmyyyy}")
+async def delete_items_for_month(mmyyyy: str):
+    '''Delete items with target due for a specific month mmyyyy'''
+    target_date = datetime.datetime.strptime(mmyyyy, '%m%Y')
+
+    items_to_delete = []
     for item in items:
         item_date = datetime.datetime.strptime(item.target_on, '%m/%d/%Y')
-        if item_date == target_date:
-            item_to_delete = item
-            deleted_items.append(item_to_delete)
-            items.remove(item)
-    display_date = target_date.strftime('%m/%d/%Y')
-    return {"message": f"Total {len(deleted_items)} deleted with target date on {display_date}"}
+        if (item_date.month, item_date.year) == (target_date.month, target_date.year):
+            items_to_delete.append(item)
 
+    deleted_items = []
+    for item in items_to_delete:
+        deleted_items.append(item)
+        items.remove(item)
+    display_date = target_date.strftime('%B %Y')
+    return {"message": f"Total {len(deleted_items)} deleted with target date on {display_date}"}
 
 @app.put("/items/complete/{item_id}")
 async def mark_complete(item_id: str):
