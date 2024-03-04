@@ -2,7 +2,7 @@ import pdb #noqa
 import datetime
 import random
 
-from fastapi import FastAPI, HTTPException, status
+from fastapi import FastAPI, HTTPException, status, Query
 from fastapi.middleware.cors import CORSMiddleware
 from faker import Faker
 
@@ -176,6 +176,15 @@ async def delete_items_for_month(mmyyyy: str):
         items.remove(item)
     display_date = target_date.strftime('%B %Y')
     return {"message": f"Total {len(deleted_items)} deleted with target date on {display_date}"}
+
+@app.delete("/items/delete-all")
+async def delete_items_all_time(confirm: bool = Query(..., description="Confirm intent to delete all items")):
+    if not confirm:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="You must confirm that you wish to delete all items")
+    total_count = len(items)
+    items.clear()
+    return {"message": f"Total {total_count} items deleted successfully."}
+
 
 @app.put("/items/complete/{item_id}")
 async def mark_complete(item_id: str):
