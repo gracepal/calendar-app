@@ -29,16 +29,16 @@ async def root():
 items = [
     Item(item='Plant water babies', target_on='03/21/2024'),
     Item(item='Bake a cake', status=StatusEnum.CANCELLED),
-    # Item(item='Boxing class', target_on='04/01/2024'),
-    # Item(item='Lorem ipsum dolor sit amet consectetur adipisicing elit. Deleniti, minus. Fuga nesciunt modi provident est, aperiam, incidunt maiores itaque, asperiores pariatur voluptatibus repellat delectus quam adipisci perspiciatis nisi tenetur ex.'),
+    Item(item='Boxing class', target_on='04/01/2024'),
+    Item(item='Lorem ipsum dolor sit amet consectetur adipisicing elit. Deleniti, minus. Fuga nesciunt modi provident est, aperiam, incidunt maiores itaque, asperiores pariatur voluptatibus repellat delectus quam adipisci perspiciatis nisi tenetur ex.'),
 ]
 
 
 test_items = []
-for _ in range(0):
+for _ in range(80):
     test_state = random.choice([StatusEnum.ACTIVE, StatusEnum.CANCELLED, StatusEnum.COMPLETED, StatusEnum.INACTIVE])
-    start_date = datetime.datetime(2024, 2, 1)
-    end_date = datetime.datetime(2024, 4, 30)
+    start_date = datetime.datetime(2024, 3, 21)
+    end_date = datetime.datetime(2024, 3, 21)
     random_date = start_date + datetime.timedelta(days=random.randint(0, (end_date - start_date).days))
     target_on = random_date.strftime("%m/%d/%Y")
     test_items.append(Item(item=fake.sentence(), target_on=target_on, status=test_state))
@@ -77,10 +77,11 @@ def get_items_on_month(mmyyyy: str):
 @app.get("/items/day/{mmddyyyy}")
 async def get_items_on_day(mmddyyyy: str):
     '''Get all items for a specific day'''
-    mm, dd, yyyy = int(mmddyyyy[:2]), int(mmddyyyy[2:4]), int(mmddyyyy[2:])
+    target_date = datetime.datetime.strptime(mmddyyyy, '%m%d%Y')
     relevant_items = []
     for item in items:
-        if item.target_due.year >= yyyy and (item.target_due.month > mm  or item.target_due == mm and item.target_due.date >= dd):
+        item_date = datetime.datetime.strptime(item.target_on, '%m/%d/%Y')
+        if target_date == item_date:
             relevant_items.append(item)
     return {"message": f"Total {len(relevant_items)} items found", "data": relevant_items}
 
