@@ -64,6 +64,9 @@ function setupCalendar(dateVal) {
         toolsBtnEl.appendChild(toolsBtnImgEl)
         dateEl.title = `${dayOfWeek}, ${monthName} ${dimensions[r][c]}, ${sourceDate.getFullYear()}` // ex. "Saturday, March 2, 2024"
         dayEl.ariaLabel = `${dayOfWeek}, ${monthName} ${dimensions[r][c]}, ${sourceDate.getFullYear()}`
+
+        dayHeaderEl.ariaLabel = `Edit ${dayOfWeek}, ${monthName} ${dimensions[r][c]}, ${sourceDate.getFullYear()}`
+        dayHeaderEl.title = `Edit ${dayOfWeek}, ${monthName} ${dimensions[r][c]}, ${sourceDate.getFullYear()}`
         dayHeaderEl.appendChild(dateEl)
         dayHeaderEl.appendChild(toolsBtnEl)
         dayEl.appendChild(dayHeaderEl)
@@ -74,6 +77,8 @@ function setupCalendar(dateVal) {
     }
     calendarEl.appendChild(weekEl)
   }
+
+  setupCalendarData()
 }
 
 /**
@@ -86,7 +91,37 @@ function setupFooter() {
   todayDisplayEl.textContent = today
 }
 
+function addItems(items) {
+  console.log('And here are the items', items)
+
+  for (const { id, item: itemStr, status, target_on } of items) {
+    console.log(`here an item:, "${id}", "${itemStr}", "${status}", "${target_on}"`)
+    const targetDay = parseInt(target_on.split('/')[1])
+    const dayEl = document.querySelector(`.day-header[title*=" ${targetDay},"] + .day-body`)
+    const itemEl = document.createElement('div')
+    itemEl.className = `${status.toLowerCase()} item`
+    itemEl.title = itemStr
+    itemEl.textContent = itemStr
+    dayEl.appendChild(itemEl)
+  }
+}
+
+async function setupCalendarData(dateVal) {
+  const sourceDate = dateVal ?? today
+  let monthStr = headerMonthEl.textContent.split(' ')[0]
+  let yearStr = headerMonthEl.textContent.split(' ')[1]
+  let paramStr = String(Utils.getMonthIndex(monthStr) + 1).padStart(2, '0') + yearStr
+
+  await fetch(`http://127.0.0.1:8000/items/month/${paramStr}`)
+    .then((resp) => resp.json())
+    .then((data) => {
+      console.log('Here is the data', data)
+      addItems(data.data)
+    })
+    .catch((err) => console.error('There was an error'))
+}
+
 // Setup
 const today = new Date()
-setupCalendar(new Date(today.getFullYear(), today.getMonth() - 1, 3))
+setupCalendar(new Date(today.getFullYear(), today.getMonth(), 3))
 setupFooter()
