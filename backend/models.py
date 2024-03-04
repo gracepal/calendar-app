@@ -8,7 +8,7 @@ import datetime
 class StatusEnum(str, Enum):
     ACTIVE = "ACTIVE"       # item is not in the past and was not marked "COMPLETE" or "CANCELLED"
     INACTIVE = "INACTIVE"   # item is in the past without explicit marking as either "COMPLETE" or "CANCELLED"
-    COMPLETE = "COMPLETE"   # item is marked as done BEFORE while ACTIVE
+    COMPLETED = "COMPLETED"   # item is marked as done BEFORE while ACTIVE
     CANCELLED = "CANCELLED" # item is marked as CANCELLED while ACTIVE
     # there is no current status for "DELETED" -> is actually removed/deleted
 

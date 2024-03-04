@@ -77,6 +77,8 @@ function setupCalendar(dateVal) {
     }
     calendarEl.appendChild(weekEl)
   }
+
+  setupCalendarData()
 }
 
 /**
@@ -91,17 +93,30 @@ function setupFooter() {
 
 function addItems(items) {
   console.log('And here are the items', items)
-  console.log(headerMonthEl.textContent)
+
+  for (const { id, item: itemStr, status, target_on } of items) {
+    console.log(`here an item:, "${id}", "${itemStr}", "${status}", "${target_on}"`)
+    const targetDay = parseInt(target_on.split('/')[1])
+    const dayEl = document.querySelector(`.day-header[title*=" ${targetDay},"] + .day-body`)
+    const itemEl = document.createElement('div')
+    itemEl.className = `${status.toLowerCase()} item`
+    itemEl.title = itemStr
+    itemEl.textContent = itemStr
+    dayEl.appendChild(itemEl)
+  }
 }
 
 async function setupCalendarData(dateVal) {
   const sourceDate = dateVal ?? today
-  console.log('Getting data for date', sourceDate)
-  await fetch('http://127.0.0.1:8000/items')
+  let monthStr = headerMonthEl.textContent.split(' ')[0]
+  let yearStr = headerMonthEl.textContent.split(' ')[1]
+  let paramStr = String(Utils.getMonthIndex(monthStr) + 1).padStart(2, '0') + yearStr
+
+  await fetch(`http://127.0.0.1:8000/items/month/${paramStr}`)
     .then((resp) => resp.json())
     .then((data) => {
       console.log('Here is the data', data)
-      addItems(data)
+      addItems(data.data)
     })
     .catch((err) => console.error('There was an error'))
 }
@@ -110,5 +125,3 @@ async function setupCalendarData(dateVal) {
 const today = new Date()
 setupCalendar(new Date(today.getFullYear(), today.getMonth(), 3))
 setupFooter()
-
-setupCalendarData()

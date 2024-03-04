@@ -6,7 +6,10 @@
     --font-fraunces-serif: "Fraunces", serif;
     --font-size: 16px;
 
-
+    --color-status-active: dodgerblue;
+    --color-status-inactive: slategrey;
+    --color-status-completed: mediumseagreen;
+    --color-status-cancelled: lightcoral;
 }
 
 * {
@@ -40,6 +43,7 @@ body {
     /* border: 5px solid cyan; */
 
     width: 90%;
+
     height: 100%;
     display: grid;
     grid-template-rows: 110px 1fr 50px;
@@ -55,6 +59,7 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    position: relative;
 
 }
 
@@ -151,6 +156,11 @@ body {
     display: flex;
     flex-direction: column;
     gap: 5px;
+
+    /* NOTE: below was critical to block stretching its parent day cell */
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
 }
 
 .day .day-header {
@@ -164,8 +174,9 @@ body {
     flex-direction: column;
     width: 100%;
     height: 100%;
+    overflow: hidden;
 
-    border: 2px solid blue;
+    /* border: 2px solid blue; */
 
 }
 
@@ -203,6 +214,55 @@ body {
 }
 
 .day .modify:hover {
+    cursor: pointer;
+}
+
+.item {
+    white-space: nowrap;
+    padding: 4px 4px 4px 18px;
+    margin: 3px;
+    overflow: hidden;
+    border-radius: 2px;
+    position: relative;
+    font-family: var(--font-karla-sans-serif);
+}
+
+.item::before {
+    content: "";
+    width: 13px;
+    height: 13px;
+    position: absolute;
+    left: 0;
+    border-radius: 50%;
+}
+
+.item.active::before {
+    background-color: var(--color-status-active);
+}
+
+.item.cancelled::before {
+    background-color: var(--color-status-cancelled);
+}
+
+.item.inactive::before {
+    background-color: var(--color-status-inactive);
+}
+
+.item.inactive {
+    opacity: 0.4;
+}
+
+.item.cancelled {
+    text-decoration: line-through;
+    color: rgba(0, 0, 0, 0.6);
+    font-style: italic;
+}
+
+.item.completed::before {
+    background-color: var(--color-status-completed);
+}
+
+.item:hover {
     cursor: pointer;
 }
 

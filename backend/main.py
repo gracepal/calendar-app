@@ -1,12 +1,16 @@
 import pdb #noqa
 import datetime
+import random
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from faker import Faker
 
 from models import Item, StatusEnum
 
 
 app = FastAPI()
+
+fake = Faker()
 
 # Allow CORS for all origins
 app.add_middleware(
@@ -23,9 +27,24 @@ async def root():
 
 items = [
     Item(id=1, item='Plant water babies', target_on='03/21/2024'),
-    Item(id=2, item='Bake a cake'),
+    Item(id=2, item='Bake a cake', status=StatusEnum.CANCELLED),
     Item(id=3, item='Boxing class', target_on='04/01/2024'),
+    Item(id=4, item='Lorem ipsum dolor sit amet consectetur adipisicing elit. Deleniti, minus. Fuga nesciunt modi provident est, aperiam, incidunt maiores itaque, asperiores pariatur voluptatibus repellat delectus quam adipisci perspiciatis nisi tenetur ex.'),
 ]
+
+
+test_items = []
+for i in range(100):
+    test_id = 100 + i
+    test_state = random.choice([StatusEnum.ACTIVE, StatusEnum.CANCELLED, StatusEnum.COMPLETED, StatusEnum.INACTIVE])
+    start_date = datetime.datetime(2024, 2, 1)
+    end_date = datetime.datetime(2024, 4, 30)
+    random_date = start_date + datetime.timedelta(days=random.randint(0, (end_date - start_date).days))
+    target_on = random_date.strftime("%m/%d/%Y")
+    test_items.append(Item(id=test_id, item=fake.sentence(), target_on=target_on, status=test_state))
+
+print('here are the test items', test_items)
+items.extend(test_items)
 
 @app.get("/items")
 async def get_items():
