@@ -1,0 +1,22 @@
+altgraph @ file:///System/Volumes/Data/SWE/Apps/DT/BuildRoots/BuildRoot7/ActiveBuildRoot/Library/Caches/com.apple.xbs/Sources/python3/python3-133.100.1.1/altgraph-0.17.2-py2.py3-none-any.whl
+autopep8==2.0.2
+aws-mfa==0.0.12
+boto3==1.26.90
+botocore==1.29.90
+certifi==2022.12.7
+distlib==0.3.6
+Faker==23.3.0
+filelock==3.9.0
+future @ file:///System/Volumes/Data/SWE/Apps/DT/BuildRoots/BuildRoot7/ActiveBuildRoot/Library/Caches/com.apple.xbs/Sources/python3/python3-133.100.1.1/future-0.18.2-py3-none-any.whl
+jmespath==1.0.1
+macholib @ file:///System/Volumes/Data/SWE/Apps/DT/BuildRoots/BuildRoot7/ActiveBuildRoot/Library/Caches/com.apple.xbs/Sources/python3/python3-133.100.1.1/macholib-1.15.2-py2.py3-none-any.whl
+pipenv==2023.2.4
+platformdirs==3.0.0
+pycodestyle==2.10.0
+python-dateutil==2.8.2
+s3transfer==0.6.0
+six @ file:///System/Volumes/Data/SWE/Apps/DT/BuildRoots/BuildRoot7/ActiveBuildRoot/Library/Caches/com.apple.xbs/Sources/python3/python3-133.100.1.1/six-1.15.0-py2.py3-none-any.whl
+tomli==2.0.1
+urllib3==1.26.15
+virtualenv==20.19.0
+virtualenv-clone==0.5.7
