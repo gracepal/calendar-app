@@ -5,6 +5,7 @@ import random
 from fastapi import FastAPI, HTTPException, status, Query
 from fastapi.middleware.cors import CORSMiddleware
 from faker import Faker
+from typing import Optional
 
 from models import Item, StatusEnum
 
@@ -35,18 +36,18 @@ items = [
 
 
 test_items = []
-for _ in range(4):
+# for _ in range(4):
+#     test_state = random.choice([StatusEnum.ACTIVE, StatusEnum.CANCELLED, StatusEnum.COMPLETED, StatusEnum.INACTIVE])
+#     start_date = datetime.datetime(2024, 3, 5)
+#     end_date = datetime.datetime(2024, 3, 5)
+#     random_date = start_date + datetime.timedelta(days=random.randint(0, (end_date - start_date).days))
+#     target_on = random_date.strftime("%m/%d/%Y")
+#     test_items.append(Item(item=fake.sentence(), target_on=target_on, status=test_state))
+
+for _ in range(100):
     test_state = random.choice([StatusEnum.ACTIVE, StatusEnum.CANCELLED, StatusEnum.COMPLETED, StatusEnum.INACTIVE])
     start_date = datetime.datetime(2024, 3, 5)
-    end_date = datetime.datetime(2024, 3, 5)
-    random_date = start_date + datetime.timedelta(days=random.randint(0, (end_date - start_date).days))
-    target_on = random_date.strftime("%m/%d/%Y")
-    test_items.append(Item(item=fake.sentence(), target_on=target_on, status=test_state))
-
-for _ in range(4):
-    test_state = random.choice([StatusEnum.ACTIVE, StatusEnum.CANCELLED, StatusEnum.COMPLETED, StatusEnum.INACTIVE])
-    start_date = datetime.datetime(2024, 4, 21)
-    end_date = datetime.datetime(2024, 4, 24)
+    end_date = datetime.datetime(2024, 3, 31)
     random_date = start_date + datetime.timedelta(days=random.randint(0, (end_date - start_date).days))
     target_on = random_date.strftime("%m/%d/%Y")
     test_items.append(Item(item=fake.sentence(), target_on=target_on, status=test_state))
@@ -55,9 +56,18 @@ items.extend(test_items)
 
 
 @app.get("/items")
-async def get_items():
+async def get_items(sort_by: Optional[str] = None, ascending: Optional[bool] = True):
     '''Get all items'''
-    return { "count": len(items), "items": items }
+    if sort_by is None:
+        return { "count": len(items), "items": items }
+
+    if sort_by not in ["created_on", "target_on"]:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f'Sort by {sort_by} is not currently supported.')
+    if sort_by == "created_on":
+        sorted_items = sorted(items, key=lambda x: x.created_on, reverse=not ascending)
+    elif sort_by == "target_on":
+        sorted_items = sorted(items, key=lambda x: x.target_on, reverse=not ascending)
+    return { "count": len(items), "items": sorted_items, "sort_by": sort_by, "ascending": ascending }
 
 
 @app.get("/items/{item_id}")

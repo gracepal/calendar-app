@@ -8,7 +8,7 @@ import time
 import os
 import random
 
-TEST_MODE = True
+TEST_MODE = False
 test_id = 0
 
 def get_unique_id():
