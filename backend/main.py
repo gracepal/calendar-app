@@ -38,7 +38,7 @@ test_items = []
 for _ in range(80):
     test_state = random.choice([StatusEnum.ACTIVE, StatusEnum.CANCELLED, StatusEnum.COMPLETED, StatusEnum.INACTIVE])
     start_date = datetime.datetime(2024, 3, 21)
-    end_date = datetime.datetime(2024, 3, 21)
+    end_date = datetime.datetime(2024, 3, 24)
     random_date = start_date + datetime.timedelta(days=random.randint(0, (end_date - start_date).days))
     target_on = random_date.strftime("%m/%d/%Y")
     test_items.append(Item(item=fake.sentence(), target_on=target_on, status=test_state))
@@ -50,7 +50,7 @@ items.extend(test_items)
 @app.get("/items")
 async def get_items():
     '''Get all items'''
-    return { "items": items, "count": len(items) }
+    return { "count": len(items), "items": items }
 
 
 @app.get("/items/{item_id}")
@@ -112,6 +112,21 @@ async def delete_item(item_id: str):
             items.remove(item)
             return {"message": f"Success removed {removed_item.id}: {removed_item}"}
     return {"message": f"No item with id {item_id} found"}
+
+
+@app.delete("/items/delete/day/{mmddyyyy}")
+async def delete_items_on_date(mmddyyyy: str):
+    '''Delete items on a specific date mmddyyyy'''
+    target_date = datetime.datetime.strptime(mmddyyyy, '%m%d%Y')
+    deleted_items = []
+    for item in items:
+        item_date = datetime.datetime.strptime(item.target_on, '%m/%d/%Y')
+        if item_date == target_date:
+            item_to_delete = item
+            deleted_items.append(item_to_delete)
+            items.remove(item)
+    display_date = target_date.strftime('%m/%d/%Y')
+    return {"message": f"Total {len(deleted_items)} deleted with target date on {display_date}"}
 
 
 @app.put("/items/complete/{item_id}")
