@@ -5,7 +5,7 @@ import random
 from fastapi import FastAPI, HTTPException, status, Query
 from fastapi.middleware.cors import CORSMiddleware
 from faker import Faker
-from typing import Optional, List
+from typing import Optional
 
 from models import Item, StatusEnum
 
