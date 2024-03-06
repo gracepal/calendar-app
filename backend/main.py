@@ -5,7 +5,7 @@ import random
 from fastapi import FastAPI, HTTPException, status, Query
 from fastapi.middleware.cors import CORSMiddleware
 from faker import Faker
-from typing import Optional
+from typing import Optional, List
 
 from models import Item, StatusEnum
 
@@ -53,7 +53,6 @@ for _ in range(100):
     test_items.append(Item(item=fake.sentence(), target_on=target_on, status=test_state))
 print('here are the test items', test_items)
 items.extend(test_items)
-
 
 @app.get("/items")
 async def get_items(sort_by: Optional[str] = None, ascending: Optional[bool] = True):
@@ -103,12 +102,16 @@ async def get_items_on_day(mmddyyyy: str):
     return {"message": f"Total {len(relevant_items)} items found", "data": relevant_items}
 
 
-@app.post("/items/create")
+@app.post("/items/create", status_code=status.HTTP_201_CREATED)
 async def create_item(item_obj: Item):
     '''Create new item with a unique id which is not to be reused'''
     new_item = item_obj
-    items.append(item_obj)
-    return {"message": f"Created item successfully {new_item}. Total count is now {len(items)}"}
+    items.append(new_item)
+    return {
+        "message": "Item created successfully.",
+        "id": new_item.id,
+        "count": len(items),
+    }
 
 
 @app.put("/items/update/{item_id}")
@@ -117,18 +120,25 @@ async def update_item(item_id: str, item_dict: dict):
     for item in items:
         if item.id == item_id:
             item.update_values(item_dict)
-            return {'item': item}
-    return {"message": f"No item with id {item_id} found"}
+            return {
+                "message": "Item updated successfully.",
+                "id": item.id,
+                'item': item,
+                "count": len(items),
+            }
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail={"message": f"Item with id '{item_id}' does not exist."})
 
 @app.delete("/items/delete/{item_id}")
 async def delete_item(item_id: str):
     '''Delete item using its id'''
     for item in items:
         if item.id == item_id:
-            removed_item = item
             items.remove(item)
-            return {"message": f"Success removed {removed_item.id}: {removed_item}"}
-    return {"message": f"No item with id {item_id} found"}
+            return {
+                "message": "Item was removed successfully.",
+                "count": len(items)
+            }
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail={"message": f"Item with id '{item_id}' does not exist."})
 
 
 @app.delete("/items/delete/day/{mmddyyyy}")
@@ -136,28 +146,6 @@ async def delete_items_for_date(mmddyyyy: str):
     '''Delete items with target due on a specific date mmddyyyy'''
     target_date = datetime.datetime.strptime(mmddyyyy, '%m%d%Y')
 
-    # items_to_delete = []
-    # for item in items:
-    #     item_date = datetime.datetime.strptime(item.target_on, '%m/%d/%Y')
-    #     if item_date == target_date:
-    #         items_to_delete.append(item)
-
-    # deleted_items = []
-    # for item in items_to_delete:
-    #     copied = str(item)
-    #     deleted_items.append(copied)
-    #     items.remove(item)
-
-    # TODO: TBD deletes every 2nd one?
-    # deleted_items = []
-    # for item in items:
-    #     item_date = datetime.datetime.strptime(item.target_on, '%m/%d/%Y')
-    #     if item_date == target_date:
-    #         item_to_delete = item
-    #         deleted_items.append(item_to_delete)
-    #         items.remove(item)
-
-    # this also works. something with removing while accessing tbd
     deleted_items = []
     for i in range(len(items)-1, -1, -1):
         item_date = datetime.datetime.strptime(items[i].target_on, '%m/%d/%Y')
@@ -166,7 +154,7 @@ async def delete_items_for_date(mmddyyyy: str):
             deleted_items.append(item_to_delete)
             items.remove(items[i])
     display_date = target_date.strftime('%m/%d/%Y')
-    return {"message": f"Total {len(deleted_items)} deleted with target date on {display_date}", "count": len(items)}
+    return {"message": f"Total {len(deleted_items)} items deleted successfully from target date {display_date}", "count": len(items)}
 
 
 @app.delete("/items/delete/month/{mmyyyy}")
