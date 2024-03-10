@@ -90,15 +90,15 @@ function setupFooter() {
 function addItems(items) {
   console.log('And here are the items', items)
 
-  // for (const { id, item: itemStr, status, target_on } of items) {
-  //   const targetDay = parseInt(target_on.split('/')[1])
-  //   const dayEl = document.querySelector(`.day-header[title*=" ${targetDay},"] + .day-body`)
-  //   const itemEl = document.createElement('div')
-  //   itemEl.className = `${status.toLowerCase()} item`
-  //   itemEl.title = itemStr
-  //   itemEl.textContent = itemStr
-  //   dayEl.appendChild(itemEl)
-  // }
+  for (const { id, item: itemStr, status, target_on } of items) {
+    const targetDay = parseInt(target_on.split('/')[1])
+    const dayEl = document.querySelector(`.day-header[title*=" ${targetDay},"] + .day-body`)
+    const itemEl = document.createElement('div')
+    itemEl.className = `${status.toLowerCase()} item`
+    itemEl.title = itemStr
+    itemEl.textContent = itemStr
+    dayEl.appendChild(itemEl)
+  }
 }
 
 async function setupCalendarData(dateVal) {
@@ -107,31 +107,13 @@ async function setupCalendarData(dateVal) {
   let yearStr = headerMonthEl.textContent.split(' ')[1]
   let paramStr = String(Utils.getMonthIndex(monthStr) + 1).padStart(2, '0') + yearStr
 
-  console.log(`Called from setup.js setupCalendarData(), paramStr="${paramStr}"`)
-
-  await fetch(`http://127.0.0.1:8000/items/month/032024`)
-    .then((resp) => resp)
+  await fetch(`http://127.0.0.1:8000/items/month/${paramStr}`)
+    .then((resp) => resp.json())
     .then((data) => {
       console.log('Here is the data', data)
       addItems(data.data)
     })
-    .catch((err) => console.error('There was an error', err))
-
-  // await fetch(`http://127.0.0.1:8000/items/month/${paramStr}`, {
-  //   method: 'GET',
-  //   headers: new Headers({ 'content-type': 'application/json' }),
-  // })
-  //   .then((resp) => resp)
-  //   .then((data) => {
-  //     console.log('Here is the data', data)
-  //     addItems(data.data)
-  //   })
-  //   // .then((resp) => resp.json())
-  //   // .then((data) => {
-  //   //   console.log('Here is the data', data)
-  //   //   addItems(data.data)
-  //   // })
-  //   .catch((err) => console.error('There was an error', err))
+    .catch((err) => console.error('There was an error'))
 }
 
 function setupDefaultTargetDate() {
