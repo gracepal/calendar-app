@@ -5,15 +5,14 @@ const todayBtnEl = document.querySelector('.header .today')
 const prevMonthBtnEl = document.querySelector('.header .previous')
 const nextMonthBtnEl = document.querySelector('.header .next')
 const monthDisplayEl = document.querySelector('.header .month')
+const calendarAddBtnEl = document.querySelector('button#open-modal')
+const addItemModalEl = document.querySelector('#modal')
+const addItemModalCancelBtnEl = document.querySelector('#modal button[type=button]')
+const addItemModalSubmitBtnEl = document.querySelector('#modal button[type=submit]')
+const addItemFormEl = document.querySelector('#item-form')
+const addItemFormTextInputEl = document.querySelector('#item-text')
+const addItemFormDateInputEl = document.querySelector('#target-on')
 
-/**
- *
- */
-function setupNavbar() {}
-
-/**
- *
- */
 function setupCalendar(dateVal) {
   const today = new Date()
   const sourceDate = dateVal ?? today
@@ -81,9 +80,6 @@ function setupCalendar(dateVal) {
   setupCalendarData()
 }
 
-/**
- *
- */
 function setupFooter() {
   // setup current date
   const todayDisplayEl = document.querySelector('.footer .today')
@@ -94,16 +90,15 @@ function setupFooter() {
 function addItems(items) {
   console.log('And here are the items', items)
 
-  for (const { id, item: itemStr, status, target_on } of items) {
-    console.log(`here an item:, "${id}", "${itemStr}", "${status}", "${target_on}"`)
-    const targetDay = parseInt(target_on.split('/')[1])
-    const dayEl = document.querySelector(`.day-header[title*=" ${targetDay},"] + .day-body`)
-    const itemEl = document.createElement('div')
-    itemEl.className = `${status.toLowerCase()} item`
-    itemEl.title = itemStr
-    itemEl.textContent = itemStr
-    dayEl.appendChild(itemEl)
-  }
+  // for (const { id, item: itemStr, status, target_on } of items) {
+  //   const targetDay = parseInt(target_on.split('/')[1])
+  //   const dayEl = document.querySelector(`.day-header[title*=" ${targetDay},"] + .day-body`)
+  //   const itemEl = document.createElement('div')
+  //   itemEl.className = `${status.toLowerCase()} item`
+  //   itemEl.title = itemStr
+  //   itemEl.textContent = itemStr
+  //   dayEl.appendChild(itemEl)
+  // }
 }
 
 async function setupCalendarData(dateVal) {
@@ -112,16 +107,41 @@ async function setupCalendarData(dateVal) {
   let yearStr = headerMonthEl.textContent.split(' ')[1]
   let paramStr = String(Utils.getMonthIndex(monthStr) + 1).padStart(2, '0') + yearStr
 
-  await fetch(`http://127.0.0.1:8000/items/month/${paramStr}`)
-    .then((resp) => resp.json())
+  console.log(`Called from setup.js setupCalendarData(), paramStr="${paramStr}"`)
+
+  await fetch(`http://127.0.0.1:8000/items/month/032024`)
+    .then((resp) => resp)
     .then((data) => {
       console.log('Here is the data', data)
       addItems(data.data)
     })
-    .catch((err) => console.error('There was an error'))
+    .catch((err) => console.error('There was an error', err))
+
+  // await fetch(`http://127.0.0.1:8000/items/month/${paramStr}`, {
+  //   method: 'GET',
+  //   headers: new Headers({ 'content-type': 'application/json' }),
+  // })
+  //   .then((resp) => resp)
+  //   .then((data) => {
+  //     console.log('Here is the data', data)
+  //     addItems(data.data)
+  //   })
+  //   // .then((resp) => resp.json())
+  //   // .then((data) => {
+  //   //   console.log('Here is the data', data)
+  //   //   addItems(data.data)
+  //   // })
+  //   .catch((err) => console.error('There was an error', err))
+}
+
+function setupDefaultTargetDate() {
+  let today = new Date()
+  let formattedDate = today.toISOString().slice(0, 10)
+  addItemFormDateInputEl.value = formattedDate
 }
 
 // Setup
 const today = new Date()
 setupCalendar(new Date(today.getFullYear(), today.getMonth(), 3))
 setupFooter()
+setupDefaultTargetDate()

@@ -44,10 +44,10 @@ test_items = []
 #     target_on = random_date.strftime("%m/%d/%Y")
 #     test_items.append(Item(item=fake.sentence(), target_on=target_on, status=test_state))
 
-for _ in range(100):
+for _ in range(3):
     test_state = random.choice([StatusEnum.ACTIVE, StatusEnum.CANCELLED, StatusEnum.COMPLETED, StatusEnum.INACTIVE])
-    start_date = datetime.datetime(2024, 3, 5)
-    end_date = datetime.datetime(2024, 3, 31)
+    start_date = datetime.datetime(2024, 3, 1)
+    end_date = datetime.datetime(2024, 3, 7)
     random_date = start_date + datetime.timedelta(days=random.randint(0, (end_date - start_date).days))
     target_on = random_date.strftime("%m/%d/%Y")
     test_items.append(Item(item=fake.sentence(), target_on=target_on, status=test_state))
