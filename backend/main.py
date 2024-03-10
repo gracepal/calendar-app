@@ -36,21 +36,21 @@ items = [
 
 
 test_items = []
-for _ in range(4):
+for _ in range(10):
     test_state = random.choice([StatusEnum.ACTIVE, StatusEnum.CANCELLED, StatusEnum.COMPLETED, StatusEnum.INACTIVE])
-    start_date = datetime.datetime(2024, 3, 5)
+    start_date = datetime.datetime(2024, 3, 3)
     end_date = datetime.datetime(2024, 3, 5)
     random_date = start_date + datetime.timedelta(days=random.randint(0, (end_date - start_date).days))
     target_on = random_date.strftime("%m/%d/%Y")
     test_items.append(Item(item=fake.sentence(), target_on=target_on, status=test_state))
 
-# for _ in range(100):
-#     test_state = random.choice([StatusEnum.ACTIVE, StatusEnum.CANCELLED, StatusEnum.COMPLETED, StatusEnum.INACTIVE])
-#     start_date = datetime.datetime(2024, 3, 5)
-#     end_date = datetime.datetime(2024, 3, 31)
-#     random_date = start_date + datetime.timedelta(days=random.randint(0, (end_date - start_date).days))
-#     target_on = random_date.strftime("%m/%d/%Y")
-#     test_items.append(Item(item=fake.sentence(), target_on=target_on, status=test_state))
+for _ in range(10):
+    test_state = random.choice([StatusEnum.ACTIVE, StatusEnum.CANCELLED, StatusEnum.COMPLETED, StatusEnum.INACTIVE])
+    start_date = datetime.datetime(2024, 3, 5)
+    end_date = datetime.datetime(2024, 3, 31)
+    random_date = start_date + datetime.timedelta(days=random.randint(0, (end_date - start_date).days))
+    target_on = random_date.strftime("%m/%d/%Y")
+    test_items.append(Item(item=fake.sentence(), target_on=target_on, status=test_state))
 print('here are the test items', test_items)
 items.extend(test_items)
 
@@ -81,7 +81,6 @@ async def get_item(item_id: str):
 @app.get("/items/month/{mmyyyy}")
 def get_items_on_month(mmyyyy: str):
     '''Get all items for a specific month'''
-    # return {"hello": "do you hear me?"}
     target_dateobj = datetime.datetime.strptime(mmyyyy, '%m%Y')
     relevant_items = []
     for item in items:

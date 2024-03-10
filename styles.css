@@ -7,9 +7,12 @@
     --font-size: 16px;
 
     --color-status-active: dodgerblue;
-    --color-status-inactive: slategrey;
+    --color-status-inactive: #D3D3D3;
     --color-status-completed: mediumseagreen;
     --color-status-cancelled: lightcoral;
+
+    --color-light-green: rgba(235, 250, 231, 1);
+    --color-bright-green: rgba(64, 211, 21, 1);
 }
 
 * {
@@ -92,6 +95,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 1;
 }
 
 .modal-content {
@@ -215,6 +219,59 @@ input:focus {
     box-shadow: 0 2px 5px rgba(211, 211, 211, 0.8);
 }
 
+.toast {
+    min-width: 385px;
+    height: 80px;
+    background-color: var(--color-light-green);
+    z-index: 10;
+    position: absolute;
+    bottom: -85px;
+    right: 5px;
+    border-radius: 12px;
+    padding: 15px;
+ }
+
+ .toast::before {
+    content: "";
+    width: calc(100% + 15px * 2);
+    display: block;
+    height: 8px;
+    top: -15px;
+    left: -15px;
+    position: relative;
+    background-color: var(--color-bright-green);
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+ }
+
+ .toast .message {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--font-fraunces-serif);
+
+ }
+
+ .toast .message img {
+    background: url('./assets/icons/check-circle.svg');
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+ }
+
+.toast .details {
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    margin-left: 12px;
+    color: darkslategray;
+    font-family: var(--font-karla-sans-serif);
+    white-space: nowrap;
+    overflow: hidden;
+    margin: 2px 0 0 30px;
+}
+
+
 
 
 /* **************************************************
@@ -312,6 +369,7 @@ input:focus {
     border-radius: 2px;
     position: relative;
     font-family: var(--font-karla-sans-serif);
+    color: darkslategray
 }
 
 .item::before {
@@ -336,7 +394,7 @@ input:focus {
 }
 
 .item.inactive {
-    opacity: 0.4;
+    color: var(--color-status-inactive);
 }
 
 .item.cancelled {
@@ -349,8 +407,18 @@ input:focus {
     background-color: var(--color-status-completed);
 }
 
-.item:hover {
+.day-body .item:hover {
     cursor: pointer;
+}
+
+.day-body .item:hover::after {
+    content: url("./assets/icons/trash-can.svg");
+    width: 16px;
+    height: 100%;
+    background-color: white;
+    position: absolute;
+    right: -1px;
+    top: 4px;
 }
 
 /* **************************************************

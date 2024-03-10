@@ -62,14 +62,17 @@ addItemModalSubmitBtnEl.addEventListener('click', function (e) {
 
   var object = {}
   formData.forEach(function (value, key) {
+    console.log(`value="${value}" key="${key}"`)
     if (key == 'target_on') {
-      const thisData = value.slice(5, 10) + '-' + value.slice(0, 4)
-      thisData.replace(/-/g, '/')
+      // '2024-03-08' -> '03-08-2024' for march
+      const [yyyyPart, mmPart, ddPart] = value.split('-')
+      object[key] = `${mmPart}/${ddPart}/${yyyyPart}`
     } else {
       object[key] = value
     }
   })
   var json = JSON.stringify(object)
+  console.log('====>>>>', json)
   fetch('http://127.0.0.1:8000/items/create', {
     method: 'POST',
     headers: new Headers({ 'content-type': 'application/json' }),
@@ -77,8 +80,14 @@ addItemModalSubmitBtnEl.addEventListener('click', function (e) {
   })
     .then((response) => {
       if (response.ok) {
-        console.log('Event added successfully!')
+        addItemFormEl.reset()
         modal.classList.add('hidden')
+
+        setupCalendar(getActiveDateObj())
+        showToastMessage('Item successfully added to the calendar', {
+          itemText: '',
+          target_on: '',
+        })
       } else {
         console.error('Error adding event:', response.statusText)
       }
@@ -86,4 +95,49 @@ addItemModalSubmitBtnEl.addEventListener('click', function (e) {
     .catch((error) => {
       console.error('Error adding event:', error)
     })
+})
+
+document.querySelectorAll('button.modify').forEach((btnEl) => {
+  btnEl.addEventListener('click', function (e) {
+    const editBtnEl = e.target.parentNode
+    const ariaLabel = editBtnEl.ariaLabel
+    console.log(`Clicked button to "${ariaLabel}"`)
+  })
+})
+
+document.addEventListener('click', async function (e) {
+  if (e.target.classList.contains('item')) {
+    const itemEl = e.target
+    const itemStatus = itemEl.className.replace(/item/, '').trim()
+    const itemText = itemEl.textContent
+    const itemId = itemEl.getAttribute('data-item-id')
+    console.log(`Clicked on item "${itemText}" with status "${itemStatus}" and id "${itemId}"`)
+
+    const trashIconWidth = 16 // as of now
+    const itemRect = itemEl.getBoundingClientRect()
+    const rightEdge = itemRect.right - trashIconWidth
+
+    if (e.clientX >= rightEdge && e.clientX <= itemRect.right) {
+      console.log(`clicked on item trash icon - deleting item from calendar id=${itemId}`)
+      await fetch(`http://127.0.0.1:8000/items/delete/${itemId}`, {
+        method: 'DELETE',
+      })
+        .then((resp) => resp.json())
+        .then((data) => {
+          console.log('here the data', data)
+          console.log(`Delete item "${itemId}" successfully`)
+
+          setupCalendar()
+          showToastMessage('Item successfully removed from calendar', {
+            itemText: itemText,
+            target_on: itemEl.parentNode.parentNode.ariaLabel,
+          })
+        })
+        .catch((err) => console.error('There was an error', err))
+
+      // Call your delete function or perform other actions here
+    } else {
+      console.log('clicked on item - opening item edit modal')
+    }
+  }
 })

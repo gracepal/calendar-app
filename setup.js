@@ -12,6 +12,9 @@ const addItemModalSubmitBtnEl = document.querySelector('#modal button[type=submi
 const addItemFormEl = document.querySelector('#item-form')
 const addItemFormTextInputEl = document.querySelector('#item-text')
 const addItemFormDateInputEl = document.querySelector('#target-on')
+const toastEl = document.querySelector('.toast')
+const toastMssgEl = document.querySelector('.toast .message span')
+const toastDetailsEl = document.querySelector('.toast .details')
 
 function setupCalendar(dateVal) {
   const today = new Date()
@@ -88,7 +91,7 @@ function setupFooter() {
 }
 
 function addItems(items) {
-  console.log('And here are the items', items)
+  // console.log('And here are the items', items)
 
   for (const { id, item: itemStr, status, target_on } of items) {
     const targetDay = parseInt(target_on.split('/')[1])
@@ -97,6 +100,7 @@ function addItems(items) {
     itemEl.className = `${status.toLowerCase()} item`
     itemEl.title = itemStr
     itemEl.textContent = itemStr
+    itemEl.setAttribute('data-item-id', id)
     dayEl.appendChild(itemEl)
   }
 }
@@ -113,7 +117,7 @@ async function setupCalendarData(dateVal) {
       console.log('Here is the data', data)
       addItems(data.data)
     })
-    .catch((err) => console.error('There was an error'))
+    .catch((err) => console.error('There was an error', err))
 }
 
 function setupDefaultTargetDate() {
@@ -122,8 +126,32 @@ function setupDefaultTargetDate() {
   addItemFormDateInputEl.value = formattedDate
 }
 
+function showToastMessage(message, { itemText, target_on }) {
+  toastEl.classList.remove('hidden')
+  toastMssgEl.textContent = message
+
+  if (itemText.length > 51) {
+    itemText = itemText.slice(0, 48) + ' . . . '
+  }
+  toastDetailsEl.textContent = itemText
+
+  setTimeout(function () {
+    toastEl.classList.add('hidden')
+    toastMssgEl.textContent = ''
+    toastMssgEl.textContent = ''
+  }, 2000)
+}
+
+function getActiveDateObj() {
+  const activeMonthDate = monthDisplayEl.textContent
+  const activeYear = parseInt(activeMonthDate.split(' ')[1])
+  const activeMonth = activeMonthDate.split(' ')[0]
+  const activeMonthIdx = Utils.getMonthIndex(activeMonth)
+  return new Date(activeYear, activeMonthIdx, 1)
+}
+
 // Setup
 const today = new Date()
-setupCalendar(new Date(today.getFullYear(), today.getMonth(), 3))
+setupCalendar(new Date(today.getFullYear(), today.getMonth(), 1))
 setupFooter()
 setupDefaultTargetDate()
