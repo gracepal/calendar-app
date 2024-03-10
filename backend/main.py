@@ -3,8 +3,8 @@ import datetime
 import random
 
 from fastapi import FastAPI, HTTPException, status, Query
-from fastapi.middleware.cors import CORSMiddleware
 from faker import Faker
+from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional
 
 from models import Item, StatusEnum
@@ -17,7 +17,7 @@ fake = Faker()
 # Allow CORS for all origins
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://127.0.0.1:5501"],
+    allow_origins=["*"],  # Allow all origins, you can specify specific origins if needed
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["*"],
@@ -36,15 +36,15 @@ items = [
 
 
 test_items = []
-# for _ in range(4):
-#     test_state = random.choice([StatusEnum.ACTIVE, StatusEnum.CANCELLED, StatusEnum.COMPLETED, StatusEnum.INACTIVE])
-#     start_date = datetime.datetime(2024, 3, 5)
-#     end_date = datetime.datetime(2024, 3, 5)
-#     random_date = start_date + datetime.timedelta(days=random.randint(0, (end_date - start_date).days))
-#     target_on = random_date.strftime("%m/%d/%Y")
-#     test_items.append(Item(item=fake.sentence(), target_on=target_on, status=test_state))
+for _ in range(10):
+    test_state = random.choice([StatusEnum.ACTIVE, StatusEnum.CANCELLED, StatusEnum.COMPLETED, StatusEnum.INACTIVE])
+    start_date = datetime.datetime(2024, 3, 3)
+    end_date = datetime.datetime(2024, 3, 5)
+    random_date = start_date + datetime.timedelta(days=random.randint(0, (end_date - start_date).days))
+    target_on = random_date.strftime("%m/%d/%Y")
+    test_items.append(Item(item=fake.sentence(), target_on=target_on, status=test_state))
 
-for _ in range(100):
+for _ in range(10):
     test_state = random.choice([StatusEnum.ACTIVE, StatusEnum.CANCELLED, StatusEnum.COMPLETED, StatusEnum.INACTIVE])
     start_date = datetime.datetime(2024, 3, 5)
     end_date = datetime.datetime(2024, 3, 31)
@@ -161,7 +161,6 @@ async def delete_items_for_date(mmddyyyy: str):
 async def delete_items_for_month(mmyyyy: str):
     '''Delete items with target due for a specific month mmyyyy'''
     target_date = datetime.datetime.strptime(mmyyyy, '%m%Y')
-
     items_to_delete = []
     for item in items:
         item_date = datetime.datetime.strptime(item.target_on, '%m/%d/%Y')

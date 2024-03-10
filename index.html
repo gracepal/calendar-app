@@ -13,14 +13,42 @@
         <!-- Header -->
         <header class="header">
             <div class="header-top">
-                <button class="previous">
-                    <img src="./assets/icons/chevron-left.svg" alt="">
-                </button>
-                <div class="month">March 2024</div>
-                <button class="next">
-                    <img src="./assets/icons/chevron-right.svg" alt="">
-                </button>
-                <button class="today">Today</button>
+                <div class="left">
+                    <button class="previous">
+                        <img src="./assets/icons/chevron-left.svg" alt="">
+                    </button>
+                    <div class="month">March 2024</div>
+                    <button class="next">
+                        <img src="./assets/icons/chevron-right.svg" alt="">
+                    </button>
+                    <button class="today">Today</button>
+                </div>
+                <div class="right">
+                    <button id="open-modal" title="Add item">
+                        <img src="./assets/icons/plus-icon.svg" alt="">
+                    </button>
+                </div>
+                <div id="modal" class="modal hidden">
+                    <div class="modal-content">
+                        <form id="item-form">
+                            <div class="top">
+                                <label for="item-text">New Item:</label>
+                                <input type="text" id="item-text" name="item" required placeholder="Add item text..."><br>
+                            </div>
+                            <div class="bottom">
+                                <div class="date-controls">
+                                    <label for="target-on">Item Date:</label>
+                                    <input type="date" id="target-on" name="target_on" required><br>
+                                </div>
+                                <div class="button-controls">
+                                    <button type="button">Cancel</button>
+                                    <button type="submit">Add</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
             </div>
             <div class="header-bottom">
                 <div class="daysOfTheWeek">
@@ -31,6 +59,16 @@
                     <div class="thu">thu</div>
                     <div class="fri">fri</div>
                     <div class="sat">sat</div>
+                </div>
+            </div>
+
+            <!-- Toast -->
+            <div class="toast hidden">
+                <div class="message">
+                    <img src="./assets/icons/check-circle.svg" alt="success">
+                    <span></span>
+                </div>
+                <div class="details">
                 </div>
             </div>
         </header>

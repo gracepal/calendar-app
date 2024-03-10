@@ -5,15 +5,17 @@ const todayBtnEl = document.querySelector('.header .today')
 const prevMonthBtnEl = document.querySelector('.header .previous')
 const nextMonthBtnEl = document.querySelector('.header .next')
 const monthDisplayEl = document.querySelector('.header .month')
+const calendarAddBtnEl = document.querySelector('button#open-modal')
+const addItemModalEl = document.querySelector('#modal')
+const addItemModalCancelBtnEl = document.querySelector('#modal button[type=button]')
+const addItemModalSubmitBtnEl = document.querySelector('#modal button[type=submit]')
+const addItemFormEl = document.querySelector('#item-form')
+const addItemFormTextInputEl = document.querySelector('#item-text')
+const addItemFormDateInputEl = document.querySelector('#target-on')
+const toastEl = document.querySelector('.toast')
+const toastMssgEl = document.querySelector('.toast .message span')
+const toastDetailsEl = document.querySelector('.toast .details')
 
-/**
- *
- */
-function setupNavbar() {}
-
-/**
- *
- */
 function setupCalendar(dateVal) {
   const today = new Date()
   const sourceDate = dateVal ?? today
@@ -81,9 +83,6 @@ function setupCalendar(dateVal) {
   setupCalendarData()
 }
 
-/**
- *
- */
 function setupFooter() {
   // setup current date
   const todayDisplayEl = document.querySelector('.footer .today')
@@ -92,16 +91,16 @@ function setupFooter() {
 }
 
 function addItems(items) {
-  console.log('And here are the items', items)
+  // console.log('And here are the items', items)
 
   for (const { id, item: itemStr, status, target_on } of items) {
-    console.log(`here an item:, "${id}", "${itemStr}", "${status}", "${target_on}"`)
     const targetDay = parseInt(target_on.split('/')[1])
     const dayEl = document.querySelector(`.day-header[title*=" ${targetDay},"] + .day-body`)
     const itemEl = document.createElement('div')
     itemEl.className = `${status.toLowerCase()} item`
     itemEl.title = itemStr
     itemEl.textContent = itemStr
+    itemEl.setAttribute('data-item-id', id)
     dayEl.appendChild(itemEl)
   }
 }
@@ -118,10 +117,41 @@ async function setupCalendarData(dateVal) {
       console.log('Here is the data', data)
       addItems(data.data)
     })
-    .catch((err) => console.error('There was an error'))
+    .catch((err) => console.error('There was an error', err))
+}
+
+function setupDefaultTargetDate() {
+  let today = new Date()
+  let formattedDate = today.toISOString().slice(0, 10)
+  addItemFormDateInputEl.value = formattedDate
+}
+
+function showToastMessage(message, { itemText, target_on }) {
+  toastEl.classList.remove('hidden')
+  toastMssgEl.textContent = message
+
+  if (itemText.length > 51) {
+    itemText = itemText.slice(0, 48) + ' . . . '
+  }
+  toastDetailsEl.textContent = itemText
+
+  setTimeout(function () {
+    toastEl.classList.add('hidden')
+    toastMssgEl.textContent = ''
+    toastMssgEl.textContent = ''
+  }, 2000)
+}
+
+function getActiveDateObj() {
+  const activeMonthDate = monthDisplayEl.textContent
+  const activeYear = parseInt(activeMonthDate.split(' ')[1])
+  const activeMonth = activeMonthDate.split(' ')[0]
+  const activeMonthIdx = Utils.getMonthIndex(activeMonth)
+  return new Date(activeYear, activeMonthIdx, 1)
 }
 
 // Setup
 const today = new Date()
-setupCalendar(new Date(today.getFullYear(), today.getMonth(), 3))
+setupCalendar(new Date(today.getFullYear(), today.getMonth(), 1))
 setupFooter()
+setupDefaultTargetDate()
