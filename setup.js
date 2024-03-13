@@ -121,9 +121,10 @@ async function setupCalendarData(dateVal) {
 }
 
 function setupDefaultTargetDate() {
-  let today = new Date()
-  let formattedDate = today.toISOString().slice(0, 10)
-  addItemFormDateInputEl.value = formattedDate
+  // form field expects format yyyy-mm-dd
+  const today = new Date().toLocaleDateString() // default format is mm/dd/yyyy
+  const [monthStr, dayStr, yearStr] = today.split('/')
+  addItemFormDateInputEl.value = `${yearStr}-${monthStr.padStart(2, '0')}-${dayStr.padStart(2, '0')}`
 }
 
 function showToastMessage(message, { itemText, target_on }) {
