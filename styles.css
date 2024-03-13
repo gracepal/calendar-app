@@ -278,18 +278,12 @@ input:focus {
                         MAIN
  ************************************************** */
 
-.main {
-}
-
 .calendar {
     height: 100%;
     width: 100%;
     background-color: rgba(251,251, 251);
-
     display: grid;
-
-    /* Below must be commented out to work from setup.js */
-    grid-template-rows: repeat(6, minmax(250px, 1fr));
+    grid-auto-rows: 250px;
 }
 
 .week {

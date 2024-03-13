@@ -22,7 +22,7 @@ function setupCalendar(dateVal) {
   const dimensions = Utils.getGridDimensions(sourceDate)
   const monthName = Utils.getMonthName(sourceDate.getMonth())
   calendarEl.textContent = ''
-  calendarEl.style.gridTemplateRows = `repeat(${dimensions.length}, minmax(280px, 1fr));`
+
   headerMonthEl.textContent = `${monthName} ${sourceDate.getFullYear()}`
   headerMonthEl.ariaLabel = `${monthName} ${sourceDate.getFullYear()}`
   todayBtnEl.title = `${Utils.getMonthName(today.getMonth())} ${today.getFullYear()}`
