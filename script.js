@@ -81,7 +81,7 @@ addItemModalSubmitBtnEl.addEventListener('click', function (e) {
     .then((response) => {
       if (response.ok) {
         addItemFormEl.reset()
-        modal.classList.add('hidden')
+        addItemModalEl.classList.add('hidden')
 
         setupCalendar(getActiveDateObj())
         showToastMessage('Item successfully added to the calendar', {
@@ -113,10 +113,10 @@ document.addEventListener('click', async function (e) {
     const itemId = itemEl.getAttribute('data-item-id')
     console.log(`Clicked on item "${itemText}" with status "${itemStatus}" and id "${itemId}"`)
 
+    // Click target is trash icon -> removes item from calendar
     const trashIconWidth = 16 // as of now
     const itemRect = itemEl.getBoundingClientRect()
     const rightEdge = itemRect.right - trashIconWidth
-
     if (e.clientX >= rightEdge && e.clientX <= itemRect.right) {
       console.log(`clicked on item trash icon - deleting item from calendar id=${itemId}`)
       await fetch(`http://127.0.0.1:8000/items/delete/${itemId}`, {
@@ -134,9 +134,9 @@ document.addEventListener('click', async function (e) {
           })
         })
         .catch((err) => console.error('There was an error', err))
-
-      // Call your delete function or perform other actions here
-    } else {
+    }
+    // Click target is item -> opens update item modal
+    else {
       console.log('clicked on item - opening item edit modal')
     }
   }
