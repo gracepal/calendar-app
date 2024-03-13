@@ -54,6 +54,7 @@ body {
     display: grid;
     grid-template-rows: 110px 1fr 50px;
     box-shadow: 0 5px 12px rgba(211, 211, 211, 0.8);
+    overflow-y: auto;
 }
 
 /* **************************************************
@@ -64,7 +65,10 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    position: relative;
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 1;
 
 }
 
