@@ -131,12 +131,7 @@ updateDayModalDeleteBtnEl.addEventListener('click', async function (e) {
     target_on: selectedItemTargetOn,
   })
   refreshItemsData(selectedDateObj, { selectedStatus: selectedStatus })
-
-  // update status counts in update modal
-  // update calendar in the background - maybe calendar should refresh after modal, maybe some flag
-  // if no more of same status, display empty state
-  //    else display next item of selected status - this can be all as well
-  // show toast that item is deleted successfully
+  refreshCalendar()
 })
 
 udpateDayModalAllCountEl.addEventListener('click', function (e) {

@@ -37,7 +37,6 @@ const getUpdateDayModalItemsPanelEl = () => document.querySelector('.items-panel
 
 function refreshCalendar() {
   setupCalendar(getActiveDateObj())
-  debugger
 }
 
 function setupCalendar(dateVal) {
