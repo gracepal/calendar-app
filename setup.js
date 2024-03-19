@@ -259,8 +259,15 @@ function addItemsToUpdateModalItemsList(itemsData, { selectItemId = null, select
     emptyStateMessageEl.className = 'empty-message'
     emptyStateMessageEl.textContent = `0 items marked ${selectedStatus}`
     udpateDayModalItemsListEl.appendChild(emptyStateMessageEl)
+
+    updateDayModalResetBtnEl.disabled = true
+    updateDayModalUpdateBtnEl.disabled = true
+    updateDayModalDeleteBtnEl.disabled = true
   } else {
     document.querySelector('#update-form').classList.remove('hidden')
+    updateDayModalResetBtnEl.disabled = false
+    updateDayModalUpdateBtnEl.disabled = false
+    updateDayModalDeleteBtnEl.disabled = false
     if (selectItemId == null) {
       if (selectedStatus == null || selectedStatus.toLowerCase() == 'all') {
         selectItemId = itemsData[0].id

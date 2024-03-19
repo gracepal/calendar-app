@@ -33,6 +33,15 @@
     display: none !important;
 }
 
+button:disabled {
+    filter: brightness(80%);
+    opacity: 0.8;
+}
+
+button:disabled:hover {
+    cursor: not-allowed;
+}
+
 .error {
     border: 1px solid red !important;
     border-radius: 3px;
@@ -176,7 +185,7 @@ body {
     transition: all 0.3s ease;
 }
 
-#add-item-form .button-controls button:hover {
+#add-item-form .button-controls button:not([disabled]):hover {
     font-weight: 500;
     transform: scale(1.01);
     color: darkslategray;
@@ -671,13 +680,13 @@ body {
     background-color: rgba(220, 20, 60, 1);
 }
 
-.edit-panel .action-buttons button:hover {
+.edit-panel .action-buttons button:not([disabled]):hover {
     cursor: pointer;
     filter: brightness(110%);
     box-shadow: 0 5px 8px rgba(211, 211, 211, 0.4);
 }
 
-.edit-panel .action-buttons button:active {
+.edit-panel .action-buttons button:not([disabled]):active {
     transform: translateY(1px);
 }
 
