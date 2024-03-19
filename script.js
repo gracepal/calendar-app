@@ -97,15 +97,15 @@ addItemModalSubmitBtnEl.addEventListener('click', function (e) {
     })
 })
 
-getModifyDayButtons().forEach((btnEl) => {
-  btnEl.addEventListener('click', function (e) {
-    console.log(`INFO: triggered event listener onclick day Modify button`)
-    const editBtnEl = e.target.parentNode
-    const ariaLabel = editBtnEl.ariaLabel
-    const dateobj = Utils.ariaLabelDateStrToDateObj(ariaLabel)
-    openUpdateModal(dateobj, {})
-  })
-})
+// getModifyDayButtons().forEach((btnEl) => {
+//   btnEl.addEventListener('click', function (e) {
+//     console.log(`INFO: triggered event listener onclick day Modify button`)
+//     const editBtnEl = e.target.parentNode
+//     const ariaLabel = editBtnEl.ariaLabel
+//     const dateobj = Utils.ariaLabelDateStrToDateObj(ariaLabel)
+//     openUpdateModal(dateobj, {})
+//   })
+// })
 
 updateDayModalResetBtnEl.addEventListener('click', function (e) {
   updateForm.reset()
@@ -175,9 +175,14 @@ udpateDayModalInactiveCountEl.addEventListener('click', function (e) {
 })
 
 document.addEventListener('click', async function (e) {
-  console.log(`Clicked x,y ${e.clientX}, ${e.clientY}`)
-
-  if (e.target.classList.contains('item')) {
+  console.log(`Clicked x,y ${e.clientX}, ${e.clientY}, target is`, e.target)
+  if (e.target.tagName === 'IMG' && e.target.hasAttribute('src') && e.target.src.includes('ellipses')) {
+    console.log(`INFO: triggered event listener onclick day ellipses img target`)
+    const editBtnEl = e.target.parentNode.parentNode
+    const ariaLabel = editBtnEl.ariaLabel
+    const dateobj = Utils.ariaLabelDateStrToDateObj(ariaLabel)
+    openUpdateModal(dateobj, {})
+  } else if (e.target.classList.contains('item')) {
     const itemEl = e.target
     const itemStatus = itemEl.className.replace(/item/, '').trim()
     const itemText = itemEl.textContent
@@ -218,15 +223,6 @@ document.addEventListener('click', async function (e) {
     const itemData = readItemData(e)
     selectItemInUpdateDayModal(itemData)
     console.log(`clicked day item: ${itemData.item} with id ${itemData.id}`)
-  }
-})
-
-document.addEventListener('dblclick', function (e) {
-  console.log('Double clicked')
-  console.log(`Clicked x,y ${e.clientX}, ${e.clientY}`)
-  if (e.target.classList.contains('day-item')) {
-    console.log('clicked on update modal day item')
-    // selectItemInUpdateDayModal(readItemData())
   }
 })
 
