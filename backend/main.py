@@ -36,7 +36,7 @@ items = [
 
 
 test_items = []
-for _ in range(10):
+for _ in range(5):
     test_state = random.choice([StatusEnum.ACTIVE, StatusEnum.CANCELLED, StatusEnum.COMPLETED, StatusEnum.INACTIVE])
     start_date = datetime.datetime(2024, 3, 3)
     end_date = datetime.datetime(2024, 3, 5)

@@ -6,6 +6,8 @@
     --font-fraunces-serif: "Fraunces", serif;
     --font-size: 16px;
 
+    --color-light-green: rgba(235, 250, 231, 1);
+    --color-bright-green: rgba(64, 211, 21, 1);
     --color-status-active: dodgerblue;
     --color-status-inactive: #D3D3D3;
     --color-status-completed: mediumseagreen;
@@ -290,7 +292,7 @@ body {
     width: 100%;
     background-color: rgba(251,251, 251);
     display: grid;
-    grid-auto-rows: 250px;
+    grid-auto-rows: 200px;
 }
 
 .week {
@@ -304,8 +306,6 @@ body {
     display: flex;
     flex-direction: column;
     gap: 5px;
-
-    /* NOTE: below was critical to block stretching its parent day cell */
     width: 100%;
     height: 100%;
     overflow: hidden;
@@ -322,7 +322,7 @@ body {
     flex-direction: column;
     width: 100%;
     height: 100%;
-    overflow: hidden;
+    overflow: scroll;
 }
 
 .date {
@@ -370,7 +370,8 @@ body {
     border-radius: 2px;
     position: relative;
     font-family: var(--font-karla-sans-serif);
-    color: darkslategray
+    color: darkslategray;
+    min-height: 20px;
 }
 
 .item::before {
@@ -440,6 +441,19 @@ body {
     align-items: center;
     z-index: 2;
     gap: 25px;
+}
+
+.update-day-modal::after {
+    content: url('./assets/icons/xmark.svg');
+    width: 12px;
+    height: 12px;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+}
+
+.update-day-modal:hover::after {
+    cursor: pointer;
 }
 
 .items-panel {
@@ -513,7 +527,8 @@ body {
     height: 37px;
     z-index: 100;
     position: absolute;
-    border: 2px solid darkslateblue;
+    border: 2px double darkslateblue;
+    box-shadow: 0 2px 8px rgba(72, 61, 139, 0.4);
     border-radius: 50%;
 }
 
@@ -543,6 +558,8 @@ body {
     padding: 12px;
     font-family: var(--font-barlow-sans-serif);
     color: darkslategray;
+    position: relative;
+    text-align: left;
 }
 
 .items-panel .day-item.active {
@@ -569,14 +586,58 @@ body {
     cursor: pointer;
 }
 
-.items-panel .day-item.selected {
+/* .items-panel .day-item.selected {
     border-width: thick;
+} */
+
+.items-panel .day-item.selected::after {
+    content: "";
+    width: calc(100% + 5px);
+    height: calc(100% + 5px);
+    border: 2px dotted blue;
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    border-radius: 5px;
+}
+
+.items-panel .day-item.active.selected::after {
+    border: 2px ridge var(--color-status-active);
+}
+
+.items-panel .day-item.cancelled.selected::after {
+    border: 2px ridge var(--color-status-cancelled);
+}
+
+.items-panel .day-item.completed.selected::after {
+    border: 2px ridge var(--color-status-completed);
+}
+
+.items-panel .day-item.inactive.selected::after {
+    border: 2px ridge var(--color-status-inactive);
 }
 
 .items-panel .day-item:active {
     transform: translateY(1px);
 }
 
+.empty-shrug {
+    width: 100%;
+    height: 100%;
+    font-size: 2rem;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: rgba(101, 101, 101, 0.8);
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif
+}
+
+.empty-message {
+    margin: auto auto;
+    font-family: var(--font-barlow-sans-serif);
+    color: rgba(101, 101, 101, 1);;
+}
 
 /* Edit Panel */
 
@@ -623,7 +684,7 @@ body {
 
 /* Edit Panel Form */
 
-.edit-panel form {
+.edit-panel .form-container {
     padding: 15px;
     height: 85%;
 
@@ -645,6 +706,7 @@ body {
 .edit-panel form {
     display: flex;
     flex-direction: column;
+    height: 100%;
 }
 
 .edit-panel label {
@@ -666,11 +728,15 @@ body {
     overflow: auto;
     outline: none;
     resize: vertical;
+    height: 7em;
+    font-family: var(--font-barlow-sans-serif);
+    font-weight: 500;
 }
 
 .edit-panel select#update-status {
 }
 
+/* how to make this stick to the bottom of its container */
 .edit-panel form .info {
     margin-top: auto;
     border-radius: 5px;
@@ -678,8 +744,12 @@ body {
     border: 1px groove lightslategray;
     color: lightslategray;
     font-family: var(--font-karla-sans-serif);
-    font-size: 14px;
+    font-size: 13px;
     padding: 5px;
+}
+
+.info span {
+    font-size: inherit;
 }
 
 

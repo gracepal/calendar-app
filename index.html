@@ -28,8 +28,7 @@
                         <img src="./assets/icons/plus-icon.svg" alt="">
                     </button>
                 </div>
-                <!-- <div class="add-item-modal modal hidden"> -->
-                <div class="add-item-modal modal">
+                <div class="add-item-modal modal hidden">
                     <div class="modal-content">
                         <form id="add-item-form">
                             <div class="top">
@@ -79,57 +78,18 @@
             <div class="calendar">
 
             </div>
-            <!-- <div class="modal update-day-modal hidden"> -->
-            <div class="modal update-day-modal">
+            <div class="modal update-day-modal hidden">
                 <div class="items-panel">
                     <div class="status-counts">
-                        <button class="selected" title="all count"><span class="all-count">25</span></button>
-                        <button title="active count"><span class="active-count">22</span></button>
-                        <button title="completed count"><span class="completed-count">3</span></button>
-                        <button title="cancelled count"><span class="cancelled-count">0</span></button>
-                        <button title="inactive count"><span class="inactive-count">1</span></button>
+                        <button title="all count"><span class="all-count">-</span></button>
+                        <button title="active count"><span class="active-count">-</span></button>
+                        <button title="completed count"><span class="completed-count">-</span></button>
+                        <button title="cancelled count"><span class="cancelled-count">-</span></button>
+                        <button title="inactive count"><span class="inactive-count">-</span></button>
                         </ul>
                     </div>
                     <div class="items-list">
-                        <button class="day-item active selected">
-                            Take out the trash Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium, ratione in? Laudantium rerum, temporibus et sequi ut eius, accusantium quas praesentium perferendis expedita voluptas aperiam repellat ad assumenda odio ex.
-                        </button>
-                        <button class="day-item cancelled">
-                            Do the laundry
-                        </button>
-                        <button class="day-item completed">
-                            Walk the dog
-                        </button>
-                        <button class="day-item inactive">
-                            Meal prep
-                        </button>
 
-
-                        <button class="day-item active">
-                            Take out the trash
-                        </button>
-                        <button class="day-item cancelled">
-                            Do the laundry
-                        </button>
-                        <button class="day-item completed">
-                            Walk the dog
-                        </button>
-                        <button class="day-item inactive">
-                            Meal prep
-                        </button>
-
-                        <button class="day-item active">
-                            Take out the trash
-                        </button>
-                        <button class="day-item cancelled">
-                            Do the laundry
-                        </button>
-                        <button class="day-item completed">
-                            Walk the dog
-                        </button>
-                        <button class="day-item inactive">
-                            Meal prep
-                        </button>
                     </div>
                 </div>
                 <div class="edit-panel">
@@ -138,30 +98,33 @@
                         <button>Update</button>
                         <button class="delete-item-btn">Delete</button>
                     </div>
-                    <form action="">
-                        <div class="row">
-                            <label for="update-target-on">Date:</label>
-                            <input type="date" id="update-target-on" name="update-target_on" required>
-                        </div>
-                        <div class="row">
-                            <label for="update-item-text">Item:</label>
-                            <textarea name="update-item-text" id="update-item-text" cols="25" rows="2"></textarea>
-                        </div>
-                        <div class="row">
-                            <label for="update-status">Status:</label>
-                            <select name="update-status" id="update-status">
-                                <option value="active" selected>Active</option>
-                                <option value="completed">Completed</option>
-                                <option value="cancelled inactive-option">Cancelled</option>
-                                <option value="inactive">Inactive</option>
-                            </select>
-                        </div>
+                    <div class="form-container">
+                        <form action="" id="update-form">
+                            <div class="row">
+                                <label for="update-target-on">Date:</label>
+                                <input type="date" id="update-target-on" name="update-target_on" required>
+                            </div>
+                            <div class="row">
+                                <label for="update-item-text">Item:</label>
+                                <textarea name="update-item-text" id="update-item-text" cols="25" rows="2"></textarea>
+                            </div>
+                            <div class="row">
+                                <label for="update-status">Status:</label>
+                                <select name="update-status" id="update-status">
+                                    <option value="" disabled selected>Select...</option>
+                                    <option value="active">Active</option>
+                                    <option value="completed">Completed</option>
+                                    <option value="cancelled">Cancelled</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
+                            </div>
 
-                        <div class="info">
-                            created by ... <br>
-                            created on date ... <br>
-                        </div>
-                    </form>
+                            <div class="info">
+                                ID: <span></span><br>
+                                Created: <span></span>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </main>
@@ -182,9 +145,7 @@
             </nav>
         </footer>
     </div>
-    <!-- <div class="modal-overlay hidden"> -->
-    <div class="modal-overlay">
-
+    <div class="modal-overlay hidden">
     </div>
 
     <script src="./utils.js"></script>
