@@ -209,10 +209,10 @@ document.addEventListener('click', async function (e) {
         })
         .catch((err) => console.error('There was an error', err))
     }
-    // Click target is item -> opens update item modal
+    // Click target is outside trash icon area -> opens update item modal
     else {
       console.log('clicked on item - opening item edit modal')
-      openUpdateModal(itemDateobj)
+      openUpdateModal(itemDateobj, {})
     }
   }
   // Update Day Modal
