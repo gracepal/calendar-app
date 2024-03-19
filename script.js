@@ -115,8 +115,28 @@ updateDayModalUpdateBtnEl.addEventListener('click', function (e) {
   console.log('clicked on update day modal - UPDATE button')
 })
 
-updateDayModalDeleteBtnEl.addEventListener('click', function (e) {
+updateDayModalDeleteBtnEl.addEventListener('click', async function (e) {
   console.log('clicked on update day modal - DELETE button')
+  const deleteTargetId = document.querySelector('form .info span:first-of-type').textContent
+  const selectedItemEl = document.querySelector('.day-item.selected')
+  const selectedItemId = selectedItemEl.getAttribute('data-id')
+  const selectedItemText = selectedItemEl.textContent
+  const selectedItemCreatedOn = selectedItemEl.getAttribute('data-created-on')
+  const selectedItemTargetOn = selectedItemEl.getAttribute('data-target-on')
+  const selectedStatus = document.querySelector('.status-counts button.selected').getAttribute('title').split(' ')[0].toUpperCase()
+  const selectedDateObj = Utils.dateobjFromStandardFormatStr(selectedItemTargetOn)
+  await deleteItemUsingItemId(deleteTargetId)
+  showToastMessage('Item successfully removed from calendar', {
+    itemText: selectedItemText,
+    target_on: selectedItemTargetOn,
+  })
+  refreshItemsData(selectedDateObj, { selectedStatus: selectedStatus })
+
+  // update status counts in update modal
+  // update calendar in the background - maybe calendar should refresh after modal, maybe some flag
+  // if no more of same status, display empty state
+  //    else display next item of selected status - this can be all as well
+  // show toast that item is deleted successfully
 })
 
 udpateDayModalAllCountEl.addEventListener('click', function (e) {

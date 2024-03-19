@@ -35,6 +35,11 @@ const getUpdateDayModalStatusCountEl = (statusKey) => document.querySelector(`.u
 const getUpdateDayModalSelectedItemEl = () => document.querySelector('button.day-item.selected')
 const getUpdateDayModalItemsPanelEl = () => document.querySelector('.items-panel')
 
+function refreshCalendar() {
+  setupCalendar(getActiveDateObj())
+  debugger
+}
+
 function setupCalendar(dateVal) {
   const today = new Date()
   const sourceDate = dateVal ?? today
@@ -338,8 +343,12 @@ function clearUpdateCalendarModalForm() {
   document.querySelector('#update-status').value = ''
 }
 
-function revertUpdateCalendarModalForm(dataId) {
-  // reverts form fields with item's last saved/submitted data
+async function deleteItemUsingItemId(itemId) {
+  const deleteUrl = `http://127.0.0.1:8000/items/delete/${itemId}`
+  await fetch(deleteUrl, { method: 'DELETE' })
+    .then((resp) => resp.json())
+    .then((data) => console.log('Here data', data))
+    .catch((err) => console.log('Error during delete', err))
 }
 
 // Setup
