@@ -102,7 +102,6 @@ updateDayModalResetBtnEl.addEventListener('click', function (e) {
 })
 
 updateDayModalUpdateBtnEl.addEventListener('click', async function (e) {
-  console.log('************************')
   console.log('clicked on update day modal - UPDATE button')
   const dataId = document.querySelector('.day-item.selected').getAttribute('data-id')
   const formData = new FormData(updateForm)
@@ -143,8 +142,8 @@ updateDayModalUpdateBtnEl.addEventListener('click', async function (e) {
     itemText: formData.get('update-item-text'),
     target_on: targetOnStr,
   })
-  const selectedStatus = getUpdateDayModalSelectedStatusValue()
-  refreshItemsData(targetOnDate, { selectedStatus: selectedStatus })
+  const selectStatus = getUpdateDayModalSelectedStatusValue()
+  refreshItemsData(targetOnDate, { selectStatus: selectStatus })
   refreshCalendar()
 })
 
@@ -152,18 +151,16 @@ updateDayModalDeleteBtnEl.addEventListener('click', async function (e) {
   console.log('clicked on update day modal - DELETE button')
   const deleteTargetId = document.querySelector('form .info span:first-of-type').textContent
   const selectedItemEl = document.querySelector('.day-item.selected')
-  const selectedItemId = selectedItemEl.getAttribute('data-id')
   const selectedItemText = selectedItemEl.textContent
-  const selectedItemCreatedOn = selectedItemEl.getAttribute('data-created-on')
   const selectedItemTargetOn = selectedItemEl.getAttribute('data-target-on')
-  const selectedStatus = document.querySelector('.status-counts button.selected').getAttribute('title').split(' ')[0].toUpperCase()
+  const selectStatus = document.querySelector('.status-counts button.selected').getAttribute('title').split(' ')[0].toUpperCase()
   const selectedDateObj = Utils.dateobjFromStandardFormatStr(selectedItemTargetOn)
   await deleteItemUsingItemId(deleteTargetId)
   showToastMessage('Item successfully removed from calendar', {
     itemText: selectedItemText,
     target_on: selectedItemTargetOn,
   })
-  refreshItemsData(selectedDateObj, { selectedStatus: selectedStatus })
+  refreshItemsData(selectedDateObj, { selectStatus: selectStatus })
   refreshCalendar()
 })
 
@@ -172,7 +169,7 @@ udpateDayModalAllCountEl.addEventListener('click', function (e) {
   const modalEl = e.target.closest('.modal')
   const datestr = modalEl.getAttribute('data-date')
   const dateobj = Utils.dateobjFromStandardFormatStr(datestr)
-  refreshItemsData(dateobj, { selectedStatus: 'ALL' })
+  refreshItemsData(dateobj, { selectStatus: 'ALL' })
 })
 
 udpateDayModalActiveCountEl.addEventListener('click', function (e) {
@@ -180,7 +177,7 @@ udpateDayModalActiveCountEl.addEventListener('click', function (e) {
   const modalEl = e.target.closest('.modal')
   const datestr = modalEl.getAttribute('data-date')
   const dateobj = Utils.dateobjFromStandardFormatStr(datestr)
-  refreshItemsData(dateobj, { selectedStatus: 'ACTIVE' })
+  refreshItemsData(dateobj, { selectStatus: 'ACTIVE' })
 })
 
 udpateDayModalCompletedCountEl.addEventListener('click', function (e) {
@@ -188,7 +185,7 @@ udpateDayModalCompletedCountEl.addEventListener('click', function (e) {
   const modalEl = e.target.closest('.modal')
   const datestr = modalEl.getAttribute('data-date')
   const dateobj = Utils.dateobjFromStandardFormatStr(datestr)
-  refreshItemsData(dateobj, { selectedStatus: 'COMPLETED' })
+  refreshItemsData(dateobj, { selectStatus: 'COMPLETED' })
 })
 
 udpateDayModalCancelledCountEl.addEventListener('click', function (e) {
@@ -196,7 +193,7 @@ udpateDayModalCancelledCountEl.addEventListener('click', function (e) {
   const modalEl = e.target.closest('.modal')
   const datestr = modalEl.getAttribute('data-date')
   const dateobj = Utils.dateobjFromStandardFormatStr(datestr)
-  refreshItemsData(dateobj, { selectedStatus: 'CANCELLED' })
+  refreshItemsData(dateobj, { selectStatus: 'CANCELLED' })
 })
 
 udpateDayModalInactiveCountEl.addEventListener('click', function (e) {
@@ -204,7 +201,7 @@ udpateDayModalInactiveCountEl.addEventListener('click', function (e) {
   const modalEl = e.target.closest('.modal')
   const datestr = modalEl.getAttribute('data-date')
   const dateobj = Utils.dateobjFromStandardFormatStr(datestr)
-  refreshItemsData(dateobj, { selectedStatus: 'INACTIVE' })
+  refreshItemsData(dateobj, { selectStatus: 'INACTIVE' })
 })
 
 document.addEventListener('click', async function (e) {

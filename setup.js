@@ -242,7 +242,7 @@ function createItemInUpdateModalList(itemData) {
   return itemBtnEl
 }
 
-function addItemsToUpdateModalItemsList(itemsData, { selectId, selectStatus }) {
+function addItemsToUpdateModalItemsList(itemsData, { selectId = null, selectStatus = 'all' }) {
   console.log(`FUNC: addItemsToUpdateModalItemsList(itemsData, { selectId="${selectId}", selectStatus="${selectStatus}" })`)
   // Clear starting state just in case
   udpateDayModalItemsListEl.textContent = ''
@@ -290,9 +290,9 @@ function addItemsToUpdateModalItemsList(itemsData, { selectId, selectStatus }) {
   }
 }
 
-async function refreshItemsData(dateobj, { selectedStatus = 'all', selectItemId = null }) {
+async function refreshItemsData(dateobj, { selectStatus = 'all', selectId = null }) {
   console.log('FUNC: refreshItemsData()')
-  const selectedStatusBtnEl = getUpdateDayModalStatusCountEl(selectedStatus)
+  const selectedStatusBtnEl = getUpdateDayModalStatusCountEl(selectStatus)
   const statusCountButtons = getUpdateDayModalStatusCountButtons()
   for (let i = 0; i < statusCountButtons.length; i++) {
     statusCountButtons[i].classList.remove('selected')
@@ -305,8 +305,8 @@ async function refreshItemsData(dateobj, { selectedStatus = 'all', selectItemId 
   await fetch(url)
     .then((resp) => resp.json())
     .then((data) => {
-      addStatusCountsToUpdateModal(data.data, { selectedStatus })
-      addItemsToUpdateModalItemsList(data.data, { selectedStatus, selectItemId })
+      addStatusCountsToUpdateModal(data.data, { selectStatus })
+      addItemsToUpdateModalItemsList(data.data, { selectStatus, selectId })
     })
     .catch((err) => console.error('There was an error', err))
 }
