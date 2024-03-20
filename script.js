@@ -251,7 +251,7 @@ document.addEventListener('click', async function (e) {
     // Click target is outside trash icon area -> opens update item modal
     else {
       console.log('clicked on item - opening item edit modal')
-      openUpdateModal(itemDateobj, {})
+      openUpdateModal(itemDateobj, { selectStatus: 'all', selectId: itemId })
     }
   }
   // Update Day Modal -
