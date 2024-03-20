@@ -141,4 +141,11 @@ class Utils {
     const [monthStr, dayStr, yearStr] = datestr.split('/')
     return `${yearStr}-${monthStr}-${dayStr}`
   }
+
+  static convertDateStrFromYearMonthDay = (datestr) => {
+    // Input expected to be in the format that the form field accepts, "2024-03-04"
+    // Returns format that is standard in db "03/04/2024"
+    const [yearStr, monthStr, dayStr] = datestr.split('-')
+    return `${monthStr}/${dayStr}/${yearStr}`
+  }
 }

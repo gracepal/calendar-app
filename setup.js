@@ -34,6 +34,8 @@ const getUpdateDayModalStatusCountButtons = () => document.querySelectorAll('.st
 const getUpdateDayModalStatusCountEl = (statusKey) => document.querySelector(`.update-day-modal button[title*="${statusKey.toLowerCase()}"]`)
 const getUpdateDayModalSelectedItemEl = () => document.querySelector('button.day-item.selected')
 const getUpdateDayModalItemsPanelEl = () => document.querySelector('.items-panel')
+const getUpdateDayModalSelectedStatusCountEl = () => document.querySelector('.status-counts button.selected')
+const getUpdateDayModalSelectedStatusValue = () => document.querySelector('.status-counts button.selected').getAttribute('title').split(' ')[0].toUpperCase()
 
 function refreshCalendar() {
   setupCalendar(getActiveDateObj())
@@ -186,6 +188,7 @@ function addStatusCountsToUpdateModal(itemsData, { selectedStatus = 'all' }) {
 
   // Count the status
   const statusCounts = {}
+
   itemsData.forEach((itemData) => {
     const key = itemData.status.toLowerCase()
     statusCounts[key] = (statusCounts[key] || 0) + 1

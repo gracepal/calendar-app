@@ -97,22 +97,55 @@ addItemModalSubmitBtnEl.addEventListener('click', function (e) {
     })
 })
 
-// getModifyDayButtons().forEach((btnEl) => {
-//   btnEl.addEventListener('click', function (e) {
-//     console.log(`INFO: triggered event listener onclick day Modify button`)
-//     const editBtnEl = e.target.parentNode
-//     const ariaLabel = editBtnEl.ariaLabel
-//     const dateobj = Utils.ariaLabelDateStrToDateObj(ariaLabel)
-//     openUpdateModal(dateobj, {})
-//   })
-// })
-
 updateDayModalResetBtnEl.addEventListener('click', function (e) {
   updateForm.reset()
 })
 
-updateDayModalUpdateBtnEl.addEventListener('click', function (e) {
+updateDayModalUpdateBtnEl.addEventListener('click', async function (e) {
+  console.log('************************')
   console.log('clicked on update day modal - UPDATE button')
+  const dataId = document.querySelector('.day-item.selected').getAttribute('data-id')
+  const formData = new FormData(updateForm)
+
+  formData.forEach(function (value, key) {
+    console.log(`value="${value}" key="${key}"`)
+  })
+
+  const targetOnStr = Utils.convertDateStrFromYearMonthDay(formData.get('update-target_on'))
+  const targetOnDate = Utils.dateobjFromStandardFormatStr(targetOnStr)
+
+  var object = {
+    target_on: targetOnStr,
+    item: formData.get('update-item-text'),
+    status: formData.get('update-status').toUpperCase(),
+  }
+  var json = JSON.stringify(object)
+  // debugger
+  await fetch(`http://127.0.0.1:8000/items/update/${dataId}`, {
+    method: 'PUT',
+    headers: new Headers({ 'content-type': 'application/json' }),
+    body: json,
+  })
+    .then((response) => {
+      if (response.ok) {
+        console.log('Response is ok')
+      } else {
+        console.error('Response is not ok')
+      }
+      return response.json()
+    })
+    .then(console.log('here json', json))
+    .catch((error) => {
+      console.error('Error adding event:', error)
+    })
+
+  showToastMessage('Item successfully udpated in calendar', {
+    itemText: formData.get('update-item-text'),
+    target_on: targetOnStr,
+  })
+  const selectedStatus = getUpdateDayModalSelectedStatusValue()
+  refreshItemsData(targetOnDate, { selectedStatus: selectedStatus })
+  refreshCalendar()
 })
 
 updateDayModalDeleteBtnEl.addEventListener('click', async function (e) {
