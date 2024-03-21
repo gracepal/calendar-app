@@ -28,9 +28,9 @@
                         <img src="./assets/icons/plus-icon.svg" alt="">
                     </button>
                 </div>
-                <div id="modal" class="modal hidden">
+                <div class="add-item-modal modal hidden">
                     <div class="modal-content">
-                        <form id="item-form">
+                        <form id="add-item-form">
                             <div class="top">
                                 <label for="item-text">New Item:</label>
                                 <input type="text" id="item-text" name="item" required placeholder="Add item text..."><br>
@@ -61,22 +61,61 @@
                     <div class="sat">sat</div>
                 </div>
             </div>
-
-            <!-- Toast -->
-            <div class="toast hidden">
-                <div class="message">
-                    <img src="./assets/icons/check-circle.svg" alt="success">
-                    <span></span>
-                </div>
-                <div class="details">
-                </div>
-            </div>
         </header>
 
         <!-- Calendar -->
         <main class="main calendar-container">
             <div class="calendar">
 
+            </div>
+            <div class="modal update-day-modal hidden">
+                <div class="items-panel">
+                    <div class="status-counts">
+                        <button title="all count"><span class="all-count">-</span></button>
+                        <button title="active count"><span class="active-count">-</span></button>
+                        <button title="completed count"><span class="completed-count">-</span></button>
+                        <button title="cancelled count"><span class="cancelled-count">-</span></button>
+                        <button title="inactive count"><span class="inactive-count">-</span></button>
+                        </ul>
+                    </div>
+                    <div class="items-list">
+
+                    </div>
+                </div>
+                <div class="edit-panel">
+                    <div class="action-buttons">
+                        <button>Reset</button>
+                        <button>Update</button>
+                        <button class="delete-item-btn">Delete</button>
+                    </div>
+                    <div class="form-container">
+                        <form action="" id="update-form">
+                            <div class="row">
+                                <label for="update-target-on">Date:</label>
+                                <input type="date" id="update-target-on" name="update-target_on" required>
+                            </div>
+                            <div class="row">
+                                <label for="update-item-text">Item:</label>
+                                <textarea name="update-item-text" id="update-item-text" cols="25" rows="2"></textarea>
+                            </div>
+                            <div class="row">
+                                <label for="update-status">Status:</label>
+                                <select name="update-status" id="update-status">
+                                    <option value="" disabled selected>Select...</option>
+                                    <option value="active">Active</option>
+                                    <option value="completed">Completed</option>
+                                    <option value="cancelled">Cancelled</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
+                            </div>
+
+                            <div class="info">
+                                ID: <span></span><br>
+                                Created: <span></span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
         </main>
 
@@ -95,6 +134,16 @@
                 </a>
             </nav>
         </footer>
+    </div>
+    <div class="modal-overlay hidden">
+    </div>
+    <div id="toast" class="toast hidden">
+        <div class="message">
+            <img src="./assets/icons/check-circle.svg" alt="success">
+            <span></span>
+        </div>
+        <div class="details">
+        </div>
     </div>
 
     <script src="./utils.js"></script>

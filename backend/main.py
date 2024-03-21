@@ -17,7 +17,7 @@ fake = Faker()
 # Allow CORS for all origins
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins, you can specify specific origins if needed
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["*"],
@@ -36,18 +36,18 @@ items = [
 
 
 test_items = []
-for _ in range(10):
+for _ in range(25):
     test_state = random.choice([StatusEnum.ACTIVE, StatusEnum.CANCELLED, StatusEnum.COMPLETED, StatusEnum.INACTIVE])
-    start_date = datetime.datetime(2024, 3, 3)
+    start_date = datetime.datetime(2024, 3, 1)
     end_date = datetime.datetime(2024, 3, 5)
     random_date = start_date + datetime.timedelta(days=random.randint(0, (end_date - start_date).days))
     target_on = random_date.strftime("%m/%d/%Y")
     test_items.append(Item(item=fake.sentence(), target_on=target_on, status=test_state))
 
-for _ in range(10):
+for _ in range(25):
     test_state = random.choice([StatusEnum.ACTIVE, StatusEnum.CANCELLED, StatusEnum.COMPLETED, StatusEnum.INACTIVE])
-    start_date = datetime.datetime(2024, 3, 5)
-    end_date = datetime.datetime(2024, 3, 31)
+    start_date = datetime.datetime(2024, 3, 10)
+    end_date = datetime.datetime(2024, 3, 12)
     random_date = start_date + datetime.timedelta(days=random.randint(0, (end_date - start_date).days))
     target_on = random_date.strftime("%m/%d/%Y")
     test_items.append(Item(item=fake.sentence(), target_on=target_on, status=test_state))
@@ -117,16 +117,39 @@ async def create_item(item_obj: Item):
 @app.put("/items/update/{item_id}")
 async def update_item(item_id: str, item_dict: dict):
     '''Update item using its id'''
+    not_allowed = {'id', 'created_on'}
+
     for item in items:
         if item.id == item_id:
+            # check if client is attempting to udpate any disallowed keys
+            disallowed = set(item_dict.keys()).intersection(not_allowed)
+            if disallowed:
+                raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail={"message": f"Following key(s) cannot be modified: ${disallowed}"})
+
+            # check if target_on date is before today
+            if 'target_on' in item_dict and item_dict['target_on'] != item.target_on:
+                current_date = datetime.datetime.now()
+                original_date = datetime.datetime.strptime(item.target_on, '%m/%d/%Y')
+                proposed_date = datetime.datetime.strptime(item_dict['target_on'], '%Y-%m-%d')
+                if proposed_date < current_date:
+                    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail={"message": f"Cannot move item to the past {proposed_date}"})
+
+            # check if item is beyond max allowed size, for now 100
+            if 'item' in item_dict and len(item_dict['item']) > 100:
+                raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail={"message": f"Item text must be less than 100 characters"})
+
+            # status validation
+            # pass for now
+
             item.update_values(item_dict)
-            return {
+            return { # otherwise success
                 "message": "Item updated successfully.",
                 "id": item.id,
                 'item': item,
                 "count": len(items),
             }
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail={"message": f"Item with id '{item_id}' does not exist."})
+
 
 @app.delete("/items/delete/{item_id}")
 async def delete_item(item_id: str):

@@ -6,13 +6,17 @@
     --font-fraunces-serif: "Fraunces", serif;
     --font-size: 16px;
 
+    --color-light-green: rgba(235, 250, 231, 1);
+    --color-bright-green: rgba(64, 211, 21, 1);
     --color-status-active: dodgerblue;
     --color-status-inactive: #D3D3D3;
     --color-status-completed: mediumseagreen;
     --color-status-cancelled: lightcoral;
 
-    --color-light-green: rgba(235, 250, 231, 1);
-    --color-bright-green: rgba(64, 211, 21, 1);
+    --color-status-active-light: rgba(30, 144, 255, 0.2);
+    --color-status-inactive-light: rgba(211, 211, 211, 0.2);
+    --color-status-completed-light: rgba(60, 179, 113, 0.2);
+    --color-status-cancelled-light: rgba(240, 128, 128, 0.2);
 }
 
 * {
@@ -27,6 +31,15 @@
 
 .hidden {
     display: none !important;
+}
+
+button:disabled {
+    filter: brightness(80%);
+    opacity: 0.8;
+}
+
+button:disabled:hover {
+    cursor: not-allowed;
 }
 
 .error {
@@ -54,6 +67,7 @@ body {
     display: grid;
     grid-template-rows: 110px 1fr 50px;
     box-shadow: 0 5px 12px rgba(211, 211, 211, 0.8);
+    overflow-y: auto;
 }
 
 /* **************************************************
@@ -64,7 +78,10 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    position: relative;
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 1;
 
 }
 
@@ -80,12 +97,14 @@ body {
     height: 28px;
 }
 
-#modal {
+.modal.add-item-modal {
     position: absolute;
     right: 0;
     top: 80px;
     width: 500px;
-    height: 25\00px;
+    /* TBD: 25\00px */
+    /* height: 25\00px; */
+    height: 210px;
     background-color: white;
     padding: 25px;
     border: 1px solid lightgray;
@@ -103,57 +122,56 @@ body {
     height: 100%;
 }
 
-#item-form {
+#add-item-form {
     display: flex;
     flex-direction: column;
     justify-content: center;
 }
 
-#item-form label {
+#add-item-form label {
     font-family: var(--font-fraunces-serif);
     font-size: 18px;
 }
 
-#item-form input {
+#add-item-form input {
     border: 1px solid lightgray;
     box-shadow: 0 2px 6px rgba(211, 211, 211, 0.8);
     padding: 8px;
 
 }
 
-input#item-text,
-input#target-on {
+#add-item-form input#item-text,
+#add-item-form input#target-on {
     display: block;
     width: 100%;
     margin-top: 5px;
 }
 
-input::placeholder {
+#add-item-form input::placeholder {
     font-family: var(--font-karla-sans-serif);
 }
 
 
-input#item-text:hover,
-input#target-on:hover {
+#add-item-form input#item-text:hover,
+#add-item-form input#target-on:hover {
     cursor: pointer;
 }
 
-#item-form .bottom {
+#add-item-form .bottom {
     display: flex;
 
 }
 
-input:focus {
+#add-item-form input:focus {
     outline: 1px solid rgba(119, 136, 153, 0.4);
     border-radius: 3px;
 }
 
-
-.date-controls {
+#add-item-form .date-controls {
     width: 60%;
 }
 
-.button-controls {
+#add-item-form .button-controls {
     width: 40%;
 
     display: flex;
@@ -161,13 +179,13 @@ input:focus {
     align-items: center;
 }
 
-.button-controls button {
+#add-item-form .button-controls button {
     font-size: 18px;
     font-family: var(--font-fraunces-serif);
     transition: all 0.3s ease;
 }
 
-.button-controls button:hover {
+#add-item-form .button-controls button:not([disabled]):hover {
     font-weight: 500;
     transform: scale(1.01);
     color: darkslategray;
@@ -223,10 +241,10 @@ input:focus {
     min-width: 385px;
     height: 80px;
     background-color: var(--color-light-green);
-    z-index: 10;
-    position: absolute;
-    bottom: -85px;
-    right: 5px;
+    z-index: 101;
+    position: fixed;
+    top: 8%;
+    right: 8%;
     border-radius: 12px;
     padding: 15px;
  }
@@ -278,18 +296,12 @@ input:focus {
                         MAIN
  ************************************************** */
 
-.main {
-}
-
 .calendar {
     height: 100%;
     width: 100%;
     background-color: rgba(251,251, 251);
-
     display: grid;
-
-    /* Below must be commented out to work from setup.js */
-    grid-template-rows: repeat(6, minmax(250px, 1fr));
+    grid-auto-rows: 200px;
 }
 
 .week {
@@ -303,8 +315,6 @@ input:focus {
     display: flex;
     flex-direction: column;
     gap: 5px;
-
-    /* NOTE: below was critical to block stretching its parent day cell */
     width: 100%;
     height: 100%;
     overflow: hidden;
@@ -321,7 +331,7 @@ input:focus {
     flex-direction: column;
     width: 100%;
     height: 100%;
-    overflow: hidden;
+    overflow: scroll;
 }
 
 .date {
@@ -369,7 +379,8 @@ input:focus {
     border-radius: 2px;
     position: relative;
     font-family: var(--font-karla-sans-serif);
-    color: darkslategray
+    color: darkslategray;
+    min-height: 20px;
 }
 
 .item::before {
@@ -421,6 +432,338 @@ input:focus {
     top: 4px;
 }
 
+/* Update Day Modal */
+
+.update-day-modal {
+    background-color: white;
+    width: 600px;
+    height: 400px;
+    border: 1px solid lightgray;
+    border-radius: 5px;
+    box-shadow: 0 5px 12px rgba(211, 211, 211, 0.8);
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+    gap: 25px;
+}
+
+.update-day-modal::after {
+    content: url('./assets/icons/xmark.svg');
+    width: 12px;
+    height: 12px;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+}
+
+.update-day-modal:hover::after {
+    cursor: pointer;
+}
+
+.items-panel {
+    padding: 15px 0 15px 25px;
+    width: 50%;
+    height: 100%;
+}
+
+.items-panel .status-counts {
+    height: 15%;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    display: flex;
+    align-items: center;
+}
+
+
+.status-counts button {
+    appearance: none;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    font-family: var(--font-karla-sans-serif);
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(211,211, 211,0.2);
+    color: darkslateblue;
+    position: relative;
+}
+
+.status-counts button:has(.all-count) {
+    /* border-image: linear-gradient(lightblue,red) 1/20%;
+    border-radius: 50%; */
+    border: double 3px transparent;
+    background-image: linear-gradient(white, white), radial-gradient(circle at top left, var(--color-status-active),var(--color-status-completed), var(--color-status-inactive), var(--color-status-cancelled));
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+}
+
+.status-counts button:has(.active-count) {
+    border: 1px solid var(--color-status-active);
+    background-color: var(--color-status-active-light);
+}
+
+.status-counts button:has(.completed-count) {
+    border: 1px solid var(--color-status-completed);
+    background-color: var(--color-status-completed-light);
+}
+
+.status-counts button:has(.cancelled-count) {
+    border: 1px solid var(--color-status-cancelled);
+    background-color: var(--color-status-cancelled-light);
+}
+
+.status-counts button:has(.inactive-count) {
+    border: 1px solid var(--color-status-inactive);
+    background-color: var(--color-status-inactive-light);
+}
+
+.status-counts button:hover {
+    cursor: pointer;
+    filter: brightness(110%);
+}
+
+.status-counts button.selected::before {
+    content: "";
+    width: 37px;
+    height: 37px;
+    z-index: 100;
+    position: absolute;
+    border: 2px double darkslateblue;
+    box-shadow: 0 2px 8px rgba(72, 61, 139, 0.4);
+    border-radius: 50%;
+}
+
+.status-counts button:active {
+    transform: translateY(1px);
+}
+
+/* Item Panel */
+
+
+.items-panel .items-list {
+    height: 85%;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+    gap: 5px;
+    border-radius: 5px;
+    border: 1px solid lightgrey;
+    background-color: rgba(211,211, 211,0.2);
+    box-shadow: 0 5px 10px rgba(211,211, 211,0.2);
+}
+
+.items-panel .day-item {
+    padding: 8px 4px;
+    border-radius: 5px;
+    padding: 12px;
+    font-family: var(--font-barlow-sans-serif);
+    color: darkslategray;
+    position: relative;
+    text-align: left;
+}
+
+.items-panel .day-item.active {
+    border: 1px solid var(--color-status-active);
+    background-color: var(--color-status-active-light);
+}
+
+.items-panel .day-item.completed {
+    border: 1px solid var(--color-status-completed);
+    background-color: var(--color-status-completed-light);
+}
+
+.items-panel .day-item.cancelled {
+    border: 1px solid var(--color-status-cancelled);
+    background-color: var(--color-status-cancelled-light);
+}
+
+.items-panel .day-item.inactive {
+    border: 1px solid var(--color-status-inactive);
+    background-color: var(--color-status-inactive-light);
+}
+
+.items-panel .day-item:hover {
+    cursor: pointer;
+}
+
+/* .items-panel .day-item.selected {
+    border-width: thick;
+} */
+
+.items-panel .day-item.selected::after {
+    content: "";
+    width: calc(100% + 5px);
+    height: calc(100% + 5px);
+    border: 2px dotted blue;
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    border-radius: 5px;
+}
+
+.items-panel .day-item.active.selected::after {
+    border: 2px ridge var(--color-status-active);
+}
+
+.items-panel .day-item.cancelled.selected::after {
+    border: 2px ridge var(--color-status-cancelled);
+}
+
+.items-panel .day-item.completed.selected::after {
+    border: 2px ridge var(--color-status-completed);
+}
+
+.items-panel .day-item.inactive.selected::after {
+    border: 2px ridge var(--color-status-inactive);
+}
+
+.items-panel .day-item:active {
+    transform: translateY(1px);
+}
+
+.empty-shrug {
+    width: 100%;
+    height: 100%;
+    font-size: 2rem;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: rgba(101, 101, 101, 0.8);
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif
+}
+
+.empty-message {
+    margin: auto auto;
+    font-family: var(--font-barlow-sans-serif);
+    color: rgba(101, 101, 101, 1);;
+}
+
+/* Edit Panel */
+
+.edit-panel {
+    padding: 15px 25px 15px 0;
+    width: 50%;
+    height: 100%;
+    overflow-y: scroll;
+}
+
+
+.edit-panel .action-buttons {
+    height: 15%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.edit-panel .action-buttons button {
+    border: 1px solid lightgray;
+    padding: 8px 12px;
+    border-radius: 5px;
+    text-transform: uppercase;
+    font-size: 12px;
+    background-color: rgba(25, 49, 83, 1);
+    color: white;
+}
+
+.edit-panel .action-buttons button.delete-item-btn {
+    background-color: rgba(220, 20, 60, 1);
+}
+
+.edit-panel .action-buttons button:not([disabled]):hover {
+    cursor: pointer;
+    filter: brightness(110%);
+    box-shadow: 0 5px 8px rgba(211, 211, 211, 0.4);
+}
+
+.edit-panel .action-buttons button:not([disabled]):active {
+    transform: translateY(1px);
+}
+
+
+/* Edit Panel Form */
+
+.edit-panel .form-container {
+    padding: 15px;
+    height: 85%;
+
+    border-radius: 5px;
+    border: 1px solid lightgrey;
+    background-color: rgba(176, 196, 222, 0.1);
+    box-shadow: 0 5px 10px rgba(211,211, 211,0.2);
+    overflow-y: scroll;
+}
+
+.edit-panel .row {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    margin: 5px 0;
+    font-family: var(--font-karla-sans-serif);
+}
+
+.edit-panel form {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.edit-panel label {
+    width: 25%;
+    display: flex;
+    align-items: center;
+}
+
+.edit-panel label + * {
+    display: inline-block;
+    width: 75%;
+    border: 1px solid lightgray;
+    box-shadow: 0 2px 6px rgba(211, 211, 211, 0.8);
+    padding: 8px;
+    background-color: white;
+}
+
+.edit-panel textarea {
+    overflow: auto;
+    outline: none;
+    resize: vertical;
+    height: 7em;
+    font-family: var(--font-barlow-sans-serif);
+    font-weight: 500;
+}
+
+.edit-panel select#update-status {
+}
+
+/* how to make this stick to the bottom of its container */
+.edit-panel form .info {
+    margin-top: auto;
+    border-radius: 5px;
+    background-color: rgba(211, 211, 211, 0.2);
+    border: 1px groove lightslategray;
+    color: lightslategray;
+    font-family: var(--font-karla-sans-serif);
+    font-size: 13px;
+    padding: 5px;
+}
+
+.info span {
+    font-size: inherit;
+}
+
+
+
+
 /* **************************************************
                        FOOTER
  ************************************************** */
@@ -445,4 +788,17 @@ input:focus {
     width: 25px;
     height: 25px;
     display: flex;
+}
+
+
+/* Modal Overlay */
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.1);
+    z-index: 1;
 }

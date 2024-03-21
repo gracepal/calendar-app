@@ -74,7 +74,6 @@ class Utils {
   // Returns last day of the month
   static getLastDayInMonth = (dateVal) => {
     const sourceDate = dateVal ?? new Date()
-    console.log(sourceDate)
     if (sourceDate.getMonth() == 1 && this.isLeapYear(sourceDate.getFullYear())) {
       return 29 // last day of feb in a leap year is 29
     } else {
@@ -97,5 +96,56 @@ class Utils {
       month.push(week)
     }
     return month
+  }
+
+  static ariaLabelDateStrToDateObj = (datestr) => {
+    // from 'Edit Tuesday, March 5, 2024' -> Date(year, month, day)
+    let [monthName, dayStr, yearStr] = datestr.replace(/,/g, '').split(' ').slice(-3)
+    let month = this.getMonthIndex(monthName)
+    let day = parseInt(dayStr)
+    let year = parseInt(yearStr)
+    let dateobj = new Date(year, month, day)
+    return dateobj
+  }
+
+  static dateobjToStandardFormatStr = (dateobj) => {
+    // standard format for right now, mm/dd/yyyy
+    const monthStr = String(dateobj.getMonth() + 1).padStart(2, '0')
+    const dayStr = String(dateobj.getDate()).padStart(2, '0')
+    const yearStr = String(dateobj.getFullYear())
+    return `${monthStr}/${dayStr}/${yearStr}`
+  }
+
+  static dateobjFromStandardFormatStr = (datestr) => {
+    const [monthStr, dayStr, yearStr] = datestr.split('/')
+    const dateobj = new Date(yearStr, monthStr - 1, dayStr)
+    return dateobj
+  }
+
+  static dateobjToFormDateFormatStr = (dateobj) => {
+    // format expected by form date field right now, yyyy-mm-dd
+    const monthStr = String(dateobj.getMonth() + 1).padStart(2, '0')
+    const dayStr = String(dateobj.getDate()).padStart(2, '0')
+    const yearStr = String(dateobj.getFullYear())
+    return `${yearStr}-${monthStr}-${dayStr}`
+  }
+
+  static getDayParamStrFromObj = (dateobj) => {
+    // return mmddyyyy as endpoint url param
+    return `${String(dateobj.getMonth() + 1).padStart(2, '0')}${String(dateobj.getDate()).padStart(2, '0')}${dateobj.getFullYear()}`
+  }
+
+  static convertDateStrToYearMonthDay = (datestr) => {
+    // Input expected to be in the format "03/04/2024"
+    // Returns format date input field expects "2024-03-04"
+    const [monthStr, dayStr, yearStr] = datestr.split('/')
+    return `${yearStr}-${monthStr}-${dayStr}`
+  }
+
+  static convertDateStrFromYearMonthDay = (datestr) => {
+    // Input expected to be in the format that the form field accepts, "2024-03-04"
+    // Returns format that is standard in db "03/04/2024"
+    const [yearStr, monthStr, dayStr] = datestr.split('-')
+    return `${monthStr}/${dayStr}/${yearStr}`
   }
 }

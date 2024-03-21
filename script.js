@@ -81,7 +81,7 @@ addItemModalSubmitBtnEl.addEventListener('click', function (e) {
     .then((response) => {
       if (response.ok) {
         addItemFormEl.reset()
-        modal.classList.add('hidden')
+        addItemModalEl.classList.add('hidden')
 
         setupCalendar(getActiveDateObj())
         showToastMessage('Item successfully added to the calendar', {
@@ -97,36 +97,143 @@ addItemModalSubmitBtnEl.addEventListener('click', function (e) {
     })
 })
 
-document.querySelectorAll('button.modify').forEach((btnEl) => {
-  btnEl.addEventListener('click', function (e) {
-    const editBtnEl = e.target.parentNode
-    const ariaLabel = editBtnEl.ariaLabel
-    console.log(`Clicked button to "${ariaLabel}"`)
+updateDayModalResetBtnEl.addEventListener('click', function (e) {
+  updateForm.reset()
+})
+
+updateDayModalUpdateBtnEl.addEventListener('click', async function (e) {
+  console.log('************************')
+  console.log('clicked on update day modal - UPDATE button')
+  const dataId = document.querySelector('.day-item.selected').getAttribute('data-id')
+  const formData = new FormData(updateForm)
+
+  formData.forEach(function (value, key) {
+    console.log(`value="${value}" key="${key}"`)
   })
+
+  const targetOnStr = Utils.convertDateStrFromYearMonthDay(formData.get('update-target_on'))
+  const targetOnDate = Utils.dateobjFromStandardFormatStr(targetOnStr)
+
+  var object = {
+    target_on: targetOnStr,
+    item: formData.get('update-item-text'),
+    status: formData.get('update-status').toUpperCase(),
+  }
+  var json = JSON.stringify(object)
+  // debugger
+  await fetch(`http://127.0.0.1:8000/items/update/${dataId}`, {
+    method: 'PUT',
+    headers: new Headers({ 'content-type': 'application/json' }),
+    body: json,
+  })
+    .then((response) => {
+      if (response.ok) {
+        console.log('Response is ok')
+      } else {
+        console.error('Response is not ok')
+      }
+      return response.json()
+    })
+    .then(console.log('here json', json))
+    .catch((error) => {
+      console.error('Error adding event:', error)
+    })
+
+  showToastMessage('Item successfully udpated in calendar', {
+    itemText: formData.get('update-item-text'),
+    target_on: targetOnStr,
+  })
+  const selectedStatus = getUpdateDayModalSelectedStatusValue()
+  refreshItemsData(targetOnDate, { selectedStatus: selectedStatus })
+  refreshCalendar()
+})
+
+updateDayModalDeleteBtnEl.addEventListener('click', async function (e) {
+  console.log('clicked on update day modal - DELETE button')
+  const deleteTargetId = document.querySelector('form .info span:first-of-type').textContent
+  const selectedItemEl = document.querySelector('.day-item.selected')
+  const selectedItemId = selectedItemEl.getAttribute('data-id')
+  const selectedItemText = selectedItemEl.textContent
+  const selectedItemCreatedOn = selectedItemEl.getAttribute('data-created-on')
+  const selectedItemTargetOn = selectedItemEl.getAttribute('data-target-on')
+  const selectedStatus = document.querySelector('.status-counts button.selected').getAttribute('title').split(' ')[0].toUpperCase()
+  const selectedDateObj = Utils.dateobjFromStandardFormatStr(selectedItemTargetOn)
+  await deleteItemUsingItemId(deleteTargetId)
+  showToastMessage('Item successfully removed from calendar', {
+    itemText: selectedItemText,
+    target_on: selectedItemTargetOn,
+  })
+  refreshItemsData(selectedDateObj, { selectedStatus: selectedStatus })
+  refreshCalendar()
+})
+
+udpateDayModalAllCountEl.addEventListener('click', function (e) {
+  console.log('clicked on update day modal - ALL status items count')
+  const modalEl = e.target.closest('.modal')
+  const datestr = modalEl.getAttribute('data-date')
+  const dateobj = Utils.dateobjFromStandardFormatStr(datestr)
+  refreshItemsData(dateobj, { selectedStatus: 'ALL' })
+})
+
+udpateDayModalActiveCountEl.addEventListener('click', function (e) {
+  console.log('clicked on update day modal - ACTIVE status items count')
+  const modalEl = e.target.closest('.modal')
+  const datestr = modalEl.getAttribute('data-date')
+  const dateobj = Utils.dateobjFromStandardFormatStr(datestr)
+  refreshItemsData(dateobj, { selectedStatus: 'ACTIVE' })
+})
+
+udpateDayModalCompletedCountEl.addEventListener('click', function (e) {
+  console.log('clicked on update day modal - COMPLETED status items count')
+  const modalEl = e.target.closest('.modal')
+  const datestr = modalEl.getAttribute('data-date')
+  const dateobj = Utils.dateobjFromStandardFormatStr(datestr)
+  refreshItemsData(dateobj, { selectedStatus: 'COMPLETED' })
+})
+
+udpateDayModalCancelledCountEl.addEventListener('click', function (e) {
+  console.log('clicked on update day modal - CANCELLED status items count')
+  const modalEl = e.target.closest('.modal')
+  const datestr = modalEl.getAttribute('data-date')
+  const dateobj = Utils.dateobjFromStandardFormatStr(datestr)
+  refreshItemsData(dateobj, { selectedStatus: 'CANCELLED' })
+})
+
+udpateDayModalInactiveCountEl.addEventListener('click', function (e) {
+  console.log('clicked on update day modal - INACTIVE status items count')
+  const modalEl = e.target.closest('.modal')
+  const datestr = modalEl.getAttribute('data-date')
+  const dateobj = Utils.dateobjFromStandardFormatStr(datestr)
+  refreshItemsData(dateobj, { selectedStatus: 'INACTIVE' })
 })
 
 document.addEventListener('click', async function (e) {
-  if (e.target.classList.contains('item')) {
+  console.log(`Clicked x,y ${e.clientX}, ${e.clientY}, target is`, e.target)
+  if (e.target.tagName === 'IMG' && e.target.hasAttribute('src') && e.target.src.includes('ellipses')) {
+    console.log(`INFO: triggered event listener onclick day ellipses img target`)
+    const editBtnEl = e.target.parentNode.parentNode
+    const ariaLabel = editBtnEl.ariaLabel
+    const dateobj = Utils.ariaLabelDateStrToDateObj(ariaLabel)
+    openUpdateModal(dateobj, {})
+  } else if (e.target.classList.contains('item')) {
     const itemEl = e.target
     const itemStatus = itemEl.className.replace(/item/, '').trim()
     const itemText = itemEl.textContent
     const itemId = itemEl.getAttribute('data-item-id')
-    console.log(`Clicked on item "${itemText}" with status "${itemStatus}" and id "${itemId}"`)
+    const itemDayAriaLabel = itemEl.parentNode.parentNode.getAttribute('aria-label')
+    const itemDateobj = Utils.ariaLabelDateStrToDateObj(itemDayAriaLabel)
 
+    console.log(`Clicked on item "${itemText}" with status "${itemStatus}" and id "${itemId}"`)
+    // Click target is trash icon -> removes item from calendar
     const trashIconWidth = 16 // as of now
     const itemRect = itemEl.getBoundingClientRect()
     const rightEdge = itemRect.right - trashIconWidth
-
     if (e.clientX >= rightEdge && e.clientX <= itemRect.right) {
-      console.log(`clicked on item trash icon - deleting item from calendar id=${itemId}`)
       await fetch(`http://127.0.0.1:8000/items/delete/${itemId}`, {
         method: 'DELETE',
       })
         .then((resp) => resp.json())
         .then((data) => {
-          console.log('here the data', data)
-          console.log(`Delete item "${itemId}" successfully`)
-
           setupCalendar()
           showToastMessage('Item successfully removed from calendar', {
             itemText: itemText,
@@ -134,10 +241,24 @@ document.addEventListener('click', async function (e) {
           })
         })
         .catch((err) => console.error('There was an error', err))
-
-      // Call your delete function or perform other actions here
-    } else {
+    }
+    // Click target is outside trash icon area -> opens update item modal
+    else {
       console.log('clicked on item - opening item edit modal')
+      openUpdateModal(itemDateobj, {})
     }
   }
+  // Update Day Modal
+  else if (e.target.classList.contains('update-day-modal')) {
+    console.log('clicked within update day modal - close xmark')
+    closeUpdateModal()
+  } else if (e.target.classList.contains('day-item')) {
+    const itemData = readItemData(e)
+    selectItemInUpdateDayModal(itemData)
+    console.log(`clicked day item: ${itemData.item} with id ${itemData.id}`)
+  }
+})
+
+updateDayModalResetBtnEl.addEventListener('click', function () {
+  clearUpdateCalendarModalForm()
 })
