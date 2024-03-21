@@ -103,6 +103,9 @@ updateDayModalResetBtnEl.addEventListener('click', function (e) {
 
 updateDayModalUpdateBtnEl.addEventListener('click', async function (e) {
   console.log('clicked on update day modal - UPDATE button')
+  const originalDateStr = document.querySelector('.update-day-modal').getAttribute('data-date') // format: '03/03/2024'
+  const originalDate = Utils.dateobjFromStandardFormatStr(originalDateStr)
+
   const dataId = document.querySelector('.day-item.selected').getAttribute('data-id')
   const formData = new FormData(updateForm)
 
@@ -119,7 +122,6 @@ updateDayModalUpdateBtnEl.addEventListener('click', async function (e) {
     status: formData.get('update-status').toUpperCase(),
   }
   var json = JSON.stringify(object)
-  // debugger
   await fetch(`http://127.0.0.1:8000/items/update/${dataId}`, {
     method: 'PUT',
     headers: new Headers({ 'content-type': 'application/json' }),
@@ -143,7 +145,11 @@ updateDayModalUpdateBtnEl.addEventListener('click', async function (e) {
     target_on: targetOnStr,
   })
   const selectStatus = getUpdateDayModalSelectedStatusValue()
-  refreshItemsData(targetOnDate, { selectStatus: selectStatus })
+  if (targetOnDate == originalDate) {
+    refreshItemsData(originalDate, { selectStatus: selectStatus, selectId: dataId })
+  } else {
+    refreshItemsData(originalDate, { selectStatus: selectStatus })
+  }
   refreshCalendar()
 })
 
