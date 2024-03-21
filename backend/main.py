@@ -36,7 +36,7 @@ items = [
 
 
 test_items = []
-for _ in range(14):
+for _ in range(25):
     test_state = random.choice([StatusEnum.ACTIVE, StatusEnum.CANCELLED, StatusEnum.COMPLETED, StatusEnum.INACTIVE])
     start_date = datetime.datetime(2024, 3, 1)
     end_date = datetime.datetime(2024, 3, 5)
@@ -44,7 +44,7 @@ for _ in range(14):
     target_on = random_date.strftime("%m/%d/%Y")
     test_items.append(Item(item=fake.sentence(), target_on=target_on, status=test_state))
 
-for _ in range(800):
+for _ in range(25):
     test_state = random.choice([StatusEnum.ACTIVE, StatusEnum.CANCELLED, StatusEnum.COMPLETED, StatusEnum.INACTIVE])
     start_date = datetime.datetime(2024, 1, 10)
     end_date = datetime.datetime(2024, 12, 31)
