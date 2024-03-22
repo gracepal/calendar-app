@@ -269,3 +269,9 @@ updateDayModalResetBtnEl.addEventListener('click', function () {
 modalOverlayEl.addEventListener('click', function () {
   closeUpdateModal()
 })
+
+document.addEventListener('keyup', function (e) {
+  if (e.keyCode === 27 && !modalOverlayEl.classList.contains('hidden')) {
+    closeUpdateModal()
+  }
+})
