@@ -265,3 +265,7 @@ document.addEventListener('click', async function (e) {
 updateDayModalResetBtnEl.addEventListener('click', function () {
   clearUpdateCalendarModalForm()
 })
+
+modalOverlayEl.addEventListener('click', function () {
+  closeUpdateModal()
+})
