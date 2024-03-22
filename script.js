@@ -254,7 +254,7 @@ document.addEventListener('click', async function (e) {
       openUpdateModal(itemDateobj, {})
     }
   }
-  // Update Day Modal
+  // Update Day Modal -
   else if (e.target.classList.contains('update-day-modal')) {
     console.log('clicked within update day modal - close xmark')
     closeUpdateModal()
