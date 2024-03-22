@@ -102,7 +102,6 @@ updateDayModalResetBtnEl.addEventListener('click', function (e) {
 })
 
 updateDayModalUpdateBtnEl.addEventListener('click', async function (e) {
-  console.log('************************')
   console.log('clicked on update day modal - UPDATE button')
   const originalDateStr = document.querySelector('.update-day-modal').getAttribute('data-date') // format: '03/03/2024'
   const originalDate = Utils.dateobjFromStandardFormatStr(originalDateStr)
@@ -158,18 +157,16 @@ updateDayModalDeleteBtnEl.addEventListener('click', async function (e) {
   console.log('clicked on update day modal - DELETE button')
   const deleteTargetId = document.querySelector('form .info span:first-of-type').textContent
   const selectedItemEl = document.querySelector('.day-item.selected')
-  const selectedItemId = selectedItemEl.getAttribute('data-id')
   const selectedItemText = selectedItemEl.textContent
-  const selectedItemCreatedOn = selectedItemEl.getAttribute('data-created-on')
   const selectedItemTargetOn = selectedItemEl.getAttribute('data-target-on')
-  const selectedStatus = document.querySelector('.status-counts button.selected').getAttribute('title').split(' ')[0].toUpperCase()
+  const selectStatus = document.querySelector('.status-counts button.selected').getAttribute('title').split(' ')[0].toUpperCase()
   const selectedDateObj = Utils.dateobjFromStandardFormatStr(selectedItemTargetOn)
   await deleteItemUsingItemId(deleteTargetId)
   showToastMessage('Item successfully removed from calendar', {
     itemText: selectedItemText,
     target_on: selectedItemTargetOn,
   })
-  refreshItemsData(selectedDateObj, { selectedStatus: selectedStatus })
+  refreshItemsData(selectedDateObj, { selectStatus: selectStatus })
   refreshCalendar()
 })
 
@@ -178,7 +175,7 @@ udpateDayModalAllCountEl.addEventListener('click', function (e) {
   const modalEl = e.target.closest('.modal')
   const datestr = modalEl.getAttribute('data-date')
   const dateobj = Utils.dateobjFromStandardFormatStr(datestr)
-  refreshItemsData(dateobj, { selectedStatus: 'ALL' })
+  refreshItemsData(dateobj, { selectStatus: 'ALL' })
 })
 
 udpateDayModalActiveCountEl.addEventListener('click', function (e) {
@@ -186,7 +183,7 @@ udpateDayModalActiveCountEl.addEventListener('click', function (e) {
   const modalEl = e.target.closest('.modal')
   const datestr = modalEl.getAttribute('data-date')
   const dateobj = Utils.dateobjFromStandardFormatStr(datestr)
-  refreshItemsData(dateobj, { selectedStatus: 'ACTIVE' })
+  refreshItemsData(dateobj, { selectStatus: 'ACTIVE' })
 })
 
 udpateDayModalCompletedCountEl.addEventListener('click', function (e) {
@@ -194,7 +191,7 @@ udpateDayModalCompletedCountEl.addEventListener('click', function (e) {
   const modalEl = e.target.closest('.modal')
   const datestr = modalEl.getAttribute('data-date')
   const dateobj = Utils.dateobjFromStandardFormatStr(datestr)
-  refreshItemsData(dateobj, { selectedStatus: 'COMPLETED' })
+  refreshItemsData(dateobj, { selectStatus: 'COMPLETED' })
 })
 
 udpateDayModalCancelledCountEl.addEventListener('click', function (e) {
@@ -202,7 +199,7 @@ udpateDayModalCancelledCountEl.addEventListener('click', function (e) {
   const modalEl = e.target.closest('.modal')
   const datestr = modalEl.getAttribute('data-date')
   const dateobj = Utils.dateobjFromStandardFormatStr(datestr)
-  refreshItemsData(dateobj, { selectedStatus: 'CANCELLED' })
+  refreshItemsData(dateobj, { selectStatus: 'CANCELLED' })
 })
 
 udpateDayModalInactiveCountEl.addEventListener('click', function (e) {
@@ -210,7 +207,7 @@ udpateDayModalInactiveCountEl.addEventListener('click', function (e) {
   const modalEl = e.target.closest('.modal')
   const datestr = modalEl.getAttribute('data-date')
   const dateobj = Utils.dateobjFromStandardFormatStr(datestr)
-  refreshItemsData(dateobj, { selectedStatus: 'INACTIVE' })
+  refreshItemsData(dateobj, { selectStatus: 'INACTIVE' })
 })
 
 document.addEventListener('click', async function (e) {
@@ -251,10 +248,10 @@ document.addEventListener('click', async function (e) {
     // Click target is outside trash icon area -> opens update item modal
     else {
       console.log('clicked on item - opening item edit modal')
-      openUpdateModal(itemDateobj, {})
+      openUpdateModal(itemDateobj, { selectStatus: 'all', selectId: itemId })
     }
   }
-  // Update Day Modal
+  // Update Day Modal -
   else if (e.target.classList.contains('update-day-modal')) {
     console.log('clicked within update day modal - close xmark')
     closeUpdateModal()
@@ -267,4 +264,14 @@ document.addEventListener('click', async function (e) {
 
 updateDayModalResetBtnEl.addEventListener('click', function () {
   clearUpdateCalendarModalForm()
+})
+
+modalOverlayEl.addEventListener('click', function () {
+  closeUpdateModal()
+})
+
+document.addEventListener('keyup', function (e) {
+  if (e.keyCode === 27 && !modalOverlayEl.classList.contains('hidden')) {
+    closeUpdateModal()
+  }
 })

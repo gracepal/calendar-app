@@ -181,9 +181,9 @@ function getActiveDateObj() {
 // ----- UPDATE MODAL RELATED -----
 // --------------------------------
 
-function addStatusCountsToUpdateModal(itemsData, { selectedStatus = 'all' }) {
+function addStatusCountsToUpdateModal(itemsData, { selectStatus = 'all' }) {
   // Default selected status bubble is "All" unless specified
-  const selectedStatusBtnEl = getUpdateDayModalStatusCountEl(selectedStatus)
+  const selectedStatusBtnEl = getUpdateDayModalStatusCountEl(selectStatus)
   selectedStatusBtnEl.className = 'selected'
 
   // Count the status
@@ -212,20 +212,22 @@ function readItemData(e) {
   }
 }
 
-function selectItemInUpdateDayModal(selectedItem) {
-  console.log(`FUNC: selectItemInUpdateDayModal()`, selectedItem)
+function selectItemInUpdateDayModal(selectedData) {
+  console.log(`FUNC: selectItemInUpdateDayModal()`, selectedData)
   // Clear or reset any prior selected styling
   document.querySelectorAll('.items-list button').forEach((btnEl) => {
     btnEl.classList.remove('selected')
   })
   // Add selected marking to item in items list
-  document.querySelector(`.items-list button[data-id="${selectedItem.id}"]`).classList.add('selected')
+  document.querySelector(`.items-list button[data-id="${selectedData.id}"]`).classList.add('selected')
+  // Scroll into view
+  document.querySelector(`.items-list button[data-id="${selectedData.id}"]`).scrollIntoView({ behavior: 'smooth', block: 'center' })
   // Populate edit panel with selected item data
-  document.querySelector('#update-target-on').value = Utils.convertDateStrToYearMonthDay(selectedItem.target_on)
-  document.querySelector('#update-item-text').value = selectedItem.item
-  document.querySelector('#update-status').value = selectedItem.status.toLowerCase()
-  document.querySelector('form .info span:first-of-type').textContent = selectedItem.id
-  document.querySelector('form .info span:last-of-type').textContent = selectedItem.created_on
+  document.querySelector('#update-target-on').value = Utils.convertDateStrToYearMonthDay(selectedData.target_on)
+  document.querySelector('#update-item-text').value = selectedData.item
+  document.querySelector('#update-status').value = selectedData.status.toLowerCase()
+  document.querySelector('form .info span:first-of-type').textContent = selectedData.id
+  document.querySelector('form .info span:last-of-type').textContent = selectedData.created_on
 }
 
 function createItemInUpdateModalList(itemData) {
@@ -240,12 +242,13 @@ function createItemInUpdateModalList(itemData) {
   return itemBtnEl
 }
 
-function addItemsToUpdateModalItemsList(itemsData, { selectItemId = null, selectedStatus = null }) {
+function addItemsToUpdateModalItemsList(itemsData, { selectId = null, selectStatus = 'all' }) {
+  console.log(`FUNC: addItemsToUpdateModalItemsList(itemsData, { selectId="${selectId}", selectStatus="${selectStatus}" })`)
   // Clear starting state just in case
   udpateDayModalItemsListEl.textContent = ''
   // Add items
   for (let i = 0; i < itemsData.length; i++) {
-    if (selectedStatus != null && selectedStatus.toLowerCase() != 'all' && itemsData[i].status.toLowerCase() != selectedStatus.toLowerCase()) {
+    if (selectStatus != null && selectStatus.toLowerCase() != 'all' && itemsData[i].status.toLowerCase() != selectStatus.toLowerCase()) {
       continue
     }
     const itemData = itemsData[i]
@@ -264,7 +267,11 @@ function addItemsToUpdateModalItemsList(itemsData, { selectItemId = null, select
 
     const emptyStateMessageEl = document.createElement('div')
     emptyStateMessageEl.className = 'empty-message'
-    emptyStateMessageEl.textContent = `0 items marked ${selectedStatus}`
+    if (selectStatus.toLowerCase() == 'all') {
+      emptyStateMessageEl.textContent = `0 items`
+    } else {
+      emptyStateMessageEl.textContent = `0 items marked ${selectStatus}`
+    }
     udpateDayModalItemsListEl.appendChild(emptyStateMessageEl)
 
     updateDayModalResetBtnEl.disabled = true
@@ -275,21 +282,21 @@ function addItemsToUpdateModalItemsList(itemsData, { selectItemId = null, select
     updateDayModalResetBtnEl.disabled = false
     updateDayModalUpdateBtnEl.disabled = false
     updateDayModalDeleteBtnEl.disabled = false
-    if (selectItemId == null) {
-      if (selectedStatus == null || selectedStatus.toLowerCase() == 'all') {
-        selectItemId = itemsData[0].id
+    if (selectId == null) {
+      if (selectStatus.toLowerCase() == 'all') {
+        selectId = itemsData[0].id
       } else {
-        selectItemId = itemsData.find((itemData) => itemData.status == selectedStatus).id
+        selectId = itemsData.find((itemData) => itemData.status == selectStatus).id
       }
     }
-    const selectedItemData = itemsData.find((itemData) => itemData.id == selectItemId)
-    selectItemInUpdateDayModal(selectedItemData)
+    const selectedData = itemsData.find((itemData) => itemData.id == selectId)
+    selectItemInUpdateDayModal(selectedData)
   }
 }
 
-async function refreshItemsData(dateobj, { selectedStatus = 'all', selectItemId = null }) {
+async function refreshItemsData(dateobj, { selectStatus = 'all', selectId = null }) {
   console.log('FUNC: refreshItemsData()')
-  const selectedStatusBtnEl = getUpdateDayModalStatusCountEl(selectedStatus)
+  const selectedStatusBtnEl = getUpdateDayModalStatusCountEl(selectStatus)
   const statusCountButtons = getUpdateDayModalStatusCountButtons()
   for (let i = 0; i < statusCountButtons.length; i++) {
     statusCountButtons[i].classList.remove('selected')
@@ -302,20 +309,19 @@ async function refreshItemsData(dateobj, { selectedStatus = 'all', selectItemId 
   await fetch(url)
     .then((resp) => resp.json())
     .then((data) => {
-      addStatusCountsToUpdateModal(data.data, { selectedStatus })
-      addItemsToUpdateModalItemsList(data.data, { selectedStatus, selectItemId })
+      addStatusCountsToUpdateModal(data.data, { selectStatus })
+      addItemsToUpdateModalItemsList(data.data, { selectStatus, selectId })
     })
     .catch((err) => console.error('There was an error', err))
 }
 
-async function openUpdateModal(dateobj, { selectedStatus = 'all', selectedItem = null }) {
-  console.log('FUNC: openUpdateModal()')
+async function openUpdateModal(dateobj, { selectStatus = 'all', selectId = null }) {
+  console.log(`FUNC: openUpdateModal(selectStatus="${selectStatus}", selectId="${selectId}")`)
 
   const statusCountButtons = getUpdateDayModalStatusCountButtons()
   for (let i = 0; i < statusCountButtons.length; i++) {
     statusCountButtons[i].classList.remove('selected')
   }
-
   const paramStr = Utils.getDayParamStrFromObj(dateobj)
   const url = `http://127.0.0.1:8000/items/day/${paramStr}`
   await fetch(url)
@@ -325,8 +331,8 @@ async function openUpdateModal(dateobj, { selectedStatus = 'all', selectedItem =
       modalOverlayEl.classList.remove('hidden')
       updateDayModalEl.classList.remove('hidden')
       updateDayModalEl.setAttribute('data-date', Utils.dateobjToStandardFormatStr(dateobj))
-      addStatusCountsToUpdateModal(data.data, { selectedStatus })
-      addItemsToUpdateModalItemsList(data.data, { selectedStatus, selectedItem })
+      addStatusCountsToUpdateModal(data.data, { selectStatus })
+      addItemsToUpdateModalItemsList(data.data, { selectStatus, selectId })
     })
     .catch((err) => console.error('There was an error', err))
 }
