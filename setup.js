@@ -267,7 +267,11 @@ function addItemsToUpdateModalItemsList(itemsData, { selectId = null, selectStat
 
     const emptyStateMessageEl = document.createElement('div')
     emptyStateMessageEl.className = 'empty-message'
-    emptyStateMessageEl.textContent = `0 items marked ${selectStatus}`
+    if (selectStatus.toLowerCase() == 'all') {
+      emptyStateMessageEl.textContent = `0 items`
+    } else {
+      emptyStateMessageEl.textContent = `0 items marked ${selectStatus}`
+    }
     udpateDayModalItemsListEl.appendChild(emptyStateMessageEl)
 
     updateDayModalResetBtnEl.disabled = true
